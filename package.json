@@ -1,0 +1,32 @@
+{
+  "name": "rest_api",
+  "version": "1.0.0",
+  "description": "Showcase of understanding of the REST API architecture",
+  "main": "dist/server.js",
+  "author": "Ray Caddick",
+  "license": "MIT",
+  "scripts": {
+    "start:build": "tsc -w",
+    "start:run": "nodemon --inspect dist/server.js",
+    "start": "concurrently npm:start:*"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "jsonwebtoken": "^9.0.2",
+    "lodash": "^4.17.21",
+    "mongoose": "^8.2.2",
+    "reflect-metadata": "^0.2.1",
+    "typegoose": "^5.9.1",
+    "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/cookie-parser": "^1.4.7",
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.11.29",
+    "concurrently": "^8.2.2",
+    "nodemon": "^3.1.0"
+  }
+}
