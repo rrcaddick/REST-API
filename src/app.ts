@@ -1,25 +1,34 @@
 import cookieParser from "cookie-parser";
-import { config as envConfig } from "dotenv";
+import { config as addEnvVariables } from "dotenv";
 import { urlencoded, json } from "express";
 import { ExpressApp } from "./config/ExpressApp";
+import { MongoDbConnection } from "./config/MongoDb";
 
-// Configure environment variables
-envConfig();
+export const initApp = async () => {
+  // Configure environment variables
+  addEnvVariables();
 
-// Create express app
-const app = ExpressApp.getApp();
+  // Connect MongoDb
+  await MongoDbConnection.connect();
 
-// Body Parser
-app.use(urlencoded({ extended: true }));
+  // Create express app
+  const app = ExpressApp.getApp();
+  console.log("Innitialized app");
 
-// JSON Parser
-app.use(json());
+  // Body Parser
+  app.use(urlencoded({ extended: true }));
 
-// Cookie Parser
-app.use(cookieParser());
+  // JSON Parser
+  app.use(json());
 
-// Add express routes
-app.use(ExpressApp.getRouter());
+  // Cookie Parser
+  app.use(cookieParser());
 
-// TODO: Add error handler
-// app.use();
+  // Add express routes
+  app.use(ExpressApp.getRouter());
+
+  // TODO: Add error handler
+  // app.use();
+
+  console.log("Added middleware");
+};
