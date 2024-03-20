@@ -1,4 +1,4 @@
-import { ExpressApp } from "../../config/ExpressApp";
+import { App } from "../../App";
 import { MetadataKeys } from "./types/MetadataKeys";
 import { RouteInfo } from "./types/RouteInfo";
 
@@ -7,7 +7,7 @@ const parsePath = (routePrefix: string | undefined, path: string): string =>
 
 export function controller(routePrefix?: string): ClassDecorator {
   return function (target: Function) {
-    const router = ExpressApp.getRouter();
+    const router = App.getRouter();
 
     for (let propName of Object.getOwnPropertyNames(target.prototype)) {
       // Retrieve route information

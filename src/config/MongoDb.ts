@@ -27,7 +27,7 @@ export class MongoDbConnection {
 
         console.log(`MongoDb connected on ${connection.host}`);
       } catch (error) {
-        console.error("MongoDB connection error:");
+        console.error("MongoDB connection error:", error);
         throw error;
       }
     }

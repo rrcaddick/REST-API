@@ -1,18 +1,18 @@
 import "reflect-metadata";
-import "./app";
+import "./App";
 import "./controllers";
-import { ExpressApp } from "./config/ExpressApp";
 import { getEnv } from "./utils/global";
-import { initApp } from "./app";
+import { App } from "./App";
+import { config as addEnvVariables } from "dotenv";
 
+// Add evn variables
+addEnvVariables();
+
+// Start server
 (async () => {
-  await initApp();
+  const PORT = parseInt(getEnv("PORT") || "5000");
 
-  const PORT = getEnv("PORT");
+  const app = new App();
 
-  const app = ExpressApp.getApp();
-
-  app.listen(PORT, () => {
-    console.log(`Started app on port ${PORT}`);
-  });
+  await app.start(PORT);
 })();

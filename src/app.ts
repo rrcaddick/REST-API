@@ -1,34 +1,88 @@
 import cookieParser from "cookie-parser";
-import { config as addEnvVariables } from "dotenv";
-import { urlencoded, json } from "express";
-import { ExpressApp } from "./config/ExpressApp";
+import express, { urlencoded, json, Express, Router, RequestHandler } from "express";
 import { MongoDbConnection } from "./config/MongoDb";
+import { logger } from "./logger";
+import morgan from "morgan";
 
-export const initApp = async () => {
-  // Configure environment variables
-  addEnvVariables();
+export class App {
+  private static app: Express;
+  private static router: Router;
 
-  // Connect MongoDb
-  await MongoDbConnection.connect();
+  constructor() {
+    if (!App.app) {
+      App.app = express();
+    }
 
-  // Create express app
-  const app = ExpressApp.getApp();
-  console.log("Innitialized app");
+    if (!App.router) {
+      App.router = Router();
+    }
+  }
 
-  // Body Parser
-  app.use(urlencoded({ extended: true }));
+  private async connectDb(): Promise<void> {
+    await MongoDbConnection.connect();
+  }
 
-  // JSON Parser
-  app.use(json());
+  private initMiddleware(): void {
+    const app = App.app;
 
-  // Cookie Parser
-  app.use(cookieParser());
+    // Body Parser
+    app.use(urlencoded({ extended: true }));
 
-  // Add express routes
-  app.use(ExpressApp.getRouter());
+    // JSON Parser
+    app.use(json());
 
-  // TODO: Add error handler
-  // app.use();
+    // Cookie Parser
+    app.use(cookieParser());
 
-  console.log("Added middleware");
-};
+    // Log incomeing requests with Morgan
+    // TODO: Change logger to singleton
+    app.use(
+      morgan("combined", {
+        stream: {
+          write: (message) => {
+            logger.info(message.trim());
+          },
+        },
+      })
+    );
+
+    // Add express routes
+    app.use(App.router);
+  }
+
+  static getApp(): Express {
+    if (!App.app) {
+      App.app = express();
+    }
+    return App.app;
+  }
+
+  getApp(): Express {
+    return App.app;
+  }
+
+  static getRouter(): Router {
+    if (!App.router) {
+      App.router = Router();
+    }
+
+    return App.router;
+  }
+
+  getRouter(): Router {
+    return App.router;
+  }
+
+  async start(port: number): Promise<void> {
+    await this.connectDb();
+    this.initMiddleware();
+
+    App.app.listen(port, () => {
+      console.log(`Started app on port ${port}`);
+    });
+  }
+
+  addMiddleware(middleware: RequestHandler): void {
+    App.arguments(middleware);
+  }
+}
