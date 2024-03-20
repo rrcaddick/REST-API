@@ -1,12 +1,10 @@
 import "reflect-metadata";
+import "./config/environmentVariables";
+import "./services/Logger";
 import "./App";
 import "./controllers";
 import { getEnv } from "./utils/global";
 import { App } from "./App";
-import { config as addEnvVariables } from "dotenv";
-
-// Add evn variables
-addEnvVariables();
 
 // Start server
 (async () => {
@@ -16,3 +14,16 @@ addEnvVariables();
 
   await app.start(PORT);
 })();
+
+[
+  ["0", "error"],
+  ["1", "warn"],
+  ["2", "info"],
+  ["3", "http"],
+  ["4", "debug"],
+  ["error", 0],
+  ["warn", 1],
+  ["info", 2],
+  ["http", 3],
+  ["debug", 4],
+];

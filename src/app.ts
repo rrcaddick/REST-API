@@ -1,7 +1,7 @@
 import cookieParser from "cookie-parser";
 import express, { urlencoded, json, Express, Router, RequestHandler } from "express";
 import { MongoDbConnection } from "./config/MongoDb";
-import { logger } from "./logger";
+import { logger } from "./services/Logger";
 import morgan from "morgan";
 
 export class App {
@@ -78,7 +78,7 @@ export class App {
     this.initMiddleware();
 
     App.app.listen(port, () => {
-      console.log(`Started app on port ${port}`);
+      logger.debug(`Started app on port ${port}`);
     });
   }
 
