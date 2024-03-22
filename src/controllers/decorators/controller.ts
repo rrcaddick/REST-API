@@ -1,3 +1,4 @@
+import { container } from "tsyringe";
 import { App } from "../../App";
 import { MetadataKeys } from "./types/MetadataKeys";
 import { RouteInfo } from "./types/RouteInfo";
@@ -7,7 +8,8 @@ const parsePath = (routePrefix: string | undefined, path: string): string =>
 
 export function controller(routePrefix?: string): ClassDecorator {
   return function (target: Function) {
-    const router = App.getRouter();
+    const app = container.resolve(App);
+    const router = app.getRouter();
 
     for (let propName of Object.getOwnPropertyNames(target.prototype)) {
       // Retrieve route information

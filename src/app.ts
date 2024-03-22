@@ -1,29 +1,25 @@
 import cookieParser from "cookie-parser";
 import express, { urlencoded, json, Express, Router, RequestHandler } from "express";
 import { MongoDbConnection } from "./config/MongoDb";
-import { logger } from "./services/Logger";
+import { WinstonLogger } from "./services/Logger";
 import morgan from "morgan";
+import { container, singleton } from "tsyringe";
 
+const logger = container.resolve(WinstonLogger).getLogger();
+
+@singleton()
 export class App {
-  private static app: Express;
-  private static router: Router;
+  private app: Express = express();
+  private router: Router = Router();
 
   constructor() {
-    if (!App.app) {
-      App.app = express();
-    }
-
-    if (!App.router) {
-      App.router = Router();
-    }
-  }
-
-  private async connectDb(): Promise<void> {
-    await MongoDbConnection.connect();
+    this.app = express();
+    this.router = Router();
+    this.initMiddleware();
   }
 
   private initMiddleware(): void {
-    const app = App.app;
+    const app = this.app;
 
     // Body Parser
     app.use(urlencoded({ extended: true }));
@@ -34,55 +30,43 @@ export class App {
     // Cookie Parser
     app.use(cookieParser());
 
-    // Log incomeing requests with Morgan
-    // TODO: Change logger to singleton
+    // Log incoming requests with Morgan
     app.use(
       morgan("combined", {
         stream: {
           write: (message) => {
-            logger.info(message.trim());
+            logger.http(message.trim());
           },
         },
       })
     );
 
     // Add express routes
-    app.use(App.router);
-  }
-
-  static getApp(): Express {
-    if (!App.app) {
-      App.app = express();
-    }
-    return App.app;
+    app.use(this.router);
   }
 
   getApp(): Express {
-    return App.app;
-  }
-
-  static getRouter(): Router {
-    if (!App.router) {
-      App.router = Router();
-    }
-
-    return App.router;
+    return this.app;
   }
 
   getRouter(): Router {
-    return App.router;
+    return this.router;
+  }
+
+  private async connectDb(): Promise<void> {
+    const db = container.resolve(MongoDbConnection);
+    await db.connect();
   }
 
   async start(port: number): Promise<void> {
     await this.connectDb();
-    this.initMiddleware();
 
-    App.app.listen(port, () => {
+    this.app.listen(port, () => {
       logger.debug(`Started app on port ${port}`);
     });
   }
 
   addMiddleware(middleware: RequestHandler): void {
-    App.arguments(middleware);
+    this.app.use(middleware);
   }
 }

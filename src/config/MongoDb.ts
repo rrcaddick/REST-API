@@ -1,13 +1,21 @@
 import { Connection, connect, set, MongooseOptions, ConnectOptions } from "mongoose";
 import { getEnv, isDevelopment } from "../utils/global";
+import { singleton } from "tsyringe";
 
 type ConnectionOptions = { mongooseOptions?: MongooseOptions; connectionOptions?: ConnectOptions };
 
-export class MongoDbConnection {
-  private static connection: Connection;
+// TODO: Decide how to make this interface fit all db types
+interface IDbConnection {
+  connect(options?: ConnectionOptions): Promise<void>;
+  getConnection(): Connection;
+}
 
-  static async connect(options?: ConnectionOptions) {
-    if (!MongoDbConnection.connection) {
+@singleton()
+export class MongoDbConnection implements IDbConnection {
+  private connection: Connection;
+
+  async connect(options?: ConnectionOptions): Promise<void> {
+    if (!this.connection) {
       const mongoURI = getEnv("MONGO_URI");
       const { mongooseOptions = {}, connectionOptions = {} } = options ?? {};
       try {
@@ -23,7 +31,7 @@ export class MongoDbConnection {
 
         const { connection } = await connect(mongoURI, connectionOptions);
 
-        MongoDbConnection.connection = connection;
+        this.connection = connection;
 
         console.log(`MongoDb connected on ${connection.host}`);
       } catch (error) {
@@ -33,11 +41,11 @@ export class MongoDbConnection {
     }
   }
 
-  static async getConnection() {
-    if (!MongoDbConnection.connection) {
+  getConnection(): Connection {
+    if (!this.connection) {
       throw new Error("No mongodb database connected. Please run connect() first");
     }
 
-    return MongoDbConnection.connection;
+    return this.connection;
   }
 }

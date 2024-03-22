@@ -1,5 +1,6 @@
-import winston, { Logger as WinstonLogger, format } from "winston";
+import winston, { Logger, format } from "winston";
 import { getEnv, isDevelopment, parseEnumToObject } from "../utils/global";
+import { singleton } from "tsyringe";
 
 const { combine, timestamp, json, colorize, printf } = format;
 
@@ -11,10 +12,11 @@ enum Levels {
   debug = 4,
 }
 
-class Logger {
-  private static logger: WinstonLogger;
+@singleton()
+export class WinstonLogger {
+  private logger: Logger;
 
-  private static colors: Record<keyof typeof Levels, string> = {
+  private colors: Record<keyof typeof Levels, string> = {
     error: "red",
     warn: "yellow",
     info: "green",
@@ -22,16 +24,16 @@ class Logger {
     debug: "white",
   };
 
-  static getLogger() {
-    if (!Logger.logger) {
-      Logger.logger = Logger.initLogger();
-      winston.addColors(Logger.colors);
-    }
-
-    return Logger.logger;
+  constructor() {
+    winston.addColors(this.colors);
+    this.initLogger();
   }
 
-  private static consoleFormat() {
+  getLogger() {
+    return this.logger;
+  }
+
+  private consoleFormat() {
     return format.combine(
       timestamp(),
       colorize({ all: true }),
@@ -39,19 +41,13 @@ class Logger {
     );
   }
 
-  private static errorFilter() {
+  private levelFilter(level: string) {
     return format((info, opts) => {
-      return info.level === "error" ? info : false;
+      return info.level === level ? info : false;
     })();
   }
 
-  private static infoFilter() {
-    return format((info, opts) => {
-      return info.level === "info" ? info : false;
-    })();
-  }
-
-  private static initLogger(): WinstonLogger {
+  private initLogger(): Logger {
     return winston.createLogger({
       level: isDevelopment() ? "debug" : getEnv("LOG_LEVEL"),
       levels: parseEnumToObject(Levels),
@@ -59,7 +55,7 @@ class Logger {
       rejectionHandlers: [new winston.transports.File({ filename: "logs/rejections.log" })],
       transports: [
         new winston.transports.Console({
-          format: Logger.consoleFormat(),
+          format: this.consoleFormat(),
         }),
         new winston.transports.File({
           filename: "logs/combined.log",
@@ -67,16 +63,14 @@ class Logger {
         new winston.transports.File({
           filename: "logs/app-error.log",
           level: "error",
-          format: combine(Logger.errorFilter(), timestamp(), json()),
+          format: combine(this.levelFilter("error"), timestamp(), json()),
         }),
         new winston.transports.File({
           filename: "logs/app-info.log",
           level: "info",
-          format: combine(Logger.infoFilter(), timestamp(), json()),
+          format: combine(this.levelFilter("info"), timestamp(), json()),
         }),
       ],
     });
   }
 }
-
-export const logger = Logger.getLogger();
