@@ -26,7 +26,7 @@ export class WinstonLogger {
 
   constructor() {
     winston.addColors(this.colors);
-    this.initLogger();
+    this.logger = this.initLogger();
   }
 
   getLogger() {

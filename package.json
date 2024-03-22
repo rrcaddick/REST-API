@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "start:build": "tsc -w",
-    "start:run": "nodemon --inspect dist/server.js",
+    "start:run": "nodemon --inspect=9229 dist/server.js",
     "start": "concurrently npm:start:*"
   },
   "dependencies": {
