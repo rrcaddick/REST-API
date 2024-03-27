@@ -9,7 +9,7 @@
     "start:build": "tsc -w",
     "start:run": "nodemon --inspect=9229 dist/server.js",
     "start": "concurrently npm:start:*",
-    "test": "jest"
+    "test": "jest --verbose"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

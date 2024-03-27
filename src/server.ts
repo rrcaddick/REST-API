@@ -1,5 +1,7 @@
 import "reflect-metadata";
-import "./config/environmentVariables";
+import { config } from "dotenv";
+config();
+import "./config/di.config";
 import "./controllers";
 import { getEnv } from "./utils/env";
 import { container } from "tsyringe";

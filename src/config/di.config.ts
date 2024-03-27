@@ -1,8 +1,7 @@
 import { container } from "tsyringe";
-import { App } from "../App";
-import { MongoDbConnection } from "../config/MongoDb";
-import { WinstonLogger } from "../services/Logger";
+import { WinstonLogger } from "../services/loggers/Logger";
+import { ILogger } from "../services/loggers/ILogger";
+import { IDbConnection, MongoDbConnection } from "./MongoDb";
 
-container.register("App", { useClass: App });
-container.register("DatabaseConnection", { useClass: MongoDbConnection });
-container.register("Logger", { useClass: WinstonLogger });
+container.register<ILogger>("Logger", { useClass: WinstonLogger });
+container.register<IDbConnection>("DbConnection", { useClass: MongoDbConnection });

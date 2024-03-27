@@ -1,23 +1,32 @@
 import { Connection, connect, set, MongooseOptions, ConnectOptions } from "mongoose";
 import { getEnv, isDevelopment } from "../utils/env";
-import { singleton } from "tsyringe";
+import { singleton, inject, injectable } from "tsyringe";
+import { ILogger } from "../services/loggers/ILogger";
 
 type ConnectionOptions = { mongooseOptions?: MongooseOptions; connectionOptions?: ConnectOptions };
 
-// TODO: Decide how to make this interface fit all db types
-interface IDbConnection {
+// TODO: Refactor - Remove getConnection methods and expose commonly used connection methods instead
+export interface IDbConnection {
   connect(options?: ConnectionOptions): Promise<void>;
   getConnection(): Connection;
 }
 
 @singleton()
+@injectable()
 export class MongoDbConnection implements IDbConnection {
   private connection: Connection;
+
+  constructor(@inject("Logger") private logger: ILogger) {}
 
   async connect(options?: ConnectionOptions): Promise<void> {
     if (!this.connection) {
       const mongoURI = getEnv("MONGO_URI");
       const { mongooseOptions = {}, connectionOptions = {} } = options ?? {};
+
+      if (!mongoURI) {
+        throw new Error("No MongoDb URI specified. Please check environment variables for MONGO_URI");
+      }
+
       try {
         set("debug", isDevelopment());
 
@@ -25,17 +34,13 @@ export class MongoDbConnection implements IDbConnection {
           set(option as keyof MongooseOptions, value);
         }
 
-        if (!mongoURI) {
-          throw new Error("No MongoDb URI specified. Please check environment variables for MONGO_URI");
-        }
-
         const { connection } = await connect(mongoURI, connectionOptions);
 
         this.connection = connection;
 
-        console.log(`MongoDb connected on ${connection.host}`);
+        this.logger.info(`MongoDb connected on ${connection.host}`);
       } catch (error) {
-        console.error("MongoDB connection error:", error);
+        this.logger.error("MongoDB connection error:", error);
         throw error;
       }
     }

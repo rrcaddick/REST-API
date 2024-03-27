@@ -1,18 +1,20 @@
 import cookieParser from "cookie-parser";
 import express, { urlencoded, json, Express, Router, RequestHandler } from "express";
-import { MongoDbConnection } from "./config/MongoDb";
-import { WinstonLogger } from "./services/Logger";
+import { IDbConnection } from "./config/MongoDb";
 import morgan from "morgan";
-import { container, singleton } from "tsyringe";
-
-const logger = container.resolve(WinstonLogger).getLogger();
+import { inject, injectable, singleton } from "tsyringe";
+import { ILogger } from "./services/loggers/ILogger";
 
 @singleton()
+@injectable()
 export class App {
   private app: Express = express();
   private router: Router = Router();
 
-  constructor() {
+  constructor(
+    @inject("Logger") private logger: ILogger,
+    @inject("DbConnection") private dbConnection: IDbConnection
+  ) {
     this.app = express();
     this.router = Router();
     this.initMiddleware();
@@ -35,7 +37,7 @@ export class App {
       morgan("combined", {
         stream: {
           write: (message) => {
-            logger.http(message.trim());
+            this.logger.http(message.trim());
           },
         },
       })
@@ -54,15 +56,14 @@ export class App {
   }
 
   private async connectDb(): Promise<void> {
-    const db = container.resolve(MongoDbConnection);
-    await db.connect();
+    await this.dbConnection.connect();
   }
 
   async start(port: number): Promise<void> {
     await this.connectDb();
 
     this.app.listen(port, () => {
-      logger.debug(`Started app on port ${port}`);
+      this.logger.debug(`App started on port ${port}`);
     });
   }
 
