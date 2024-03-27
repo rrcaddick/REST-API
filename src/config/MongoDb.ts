@@ -1,5 +1,5 @@
 import { Connection, connect, set, MongooseOptions, ConnectOptions } from "mongoose";
-import { getEnv, isDevelopment } from "../utils/global";
+import { getEnv, isDevelopment } from "../utils/env";
 import { singleton } from "tsyringe";
 
 type ConnectionOptions = { mongooseOptions?: MongooseOptions; connectionOptions?: ConnectOptions };

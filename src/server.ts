@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import "./config/environmentVariables";
 import "./controllers";
-import { getEnv } from "./utils/global";
+import { getEnv } from "./utils/env";
 import { container } from "tsyringe";
 import { App } from "./App";
 

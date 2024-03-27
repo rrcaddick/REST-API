@@ -1,5 +1,6 @@
 import winston, { Logger, format } from "winston";
-import { getEnv, isDevelopment, parseEnumToObject } from "../utils/global";
+import { parseEnumToObject } from "../utils/enum";
+import { getEnv, isDevelopment } from "../utils/env";
 import { singleton } from "tsyringe";
 
 const { combine, timestamp, json, colorize, printf } = format;
