@@ -1,15 +1,15 @@
 import winston, { Logger, format } from "winston";
-import { parseEnumToObject } from "../../utils/enum";
-import { getEnv, isDevelopment } from "../../utils/env";
+import { parseEnumToObject } from "@utils/enum";
+import { getEnv, isDevelopment } from "@utils/env";
 import { injectable, singleton } from "tsyringe";
-import { ILogger } from "./ILogger";
-import { Levels } from "./Levels";
+import { ILogger } from "@logger/logger.interface";
+import { Levels } from "@logger/logger.enum";
 
 const { combine, timestamp, json, colorize, printf } = format;
 
 @singleton()
 @injectable()
-export class WinstonLogger implements ILogger {
+export class LoggerService implements ILogger {
   private logger: Logger;
 
   // Ensures that colors stays in sync with the Levels enum

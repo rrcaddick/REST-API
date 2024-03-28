@@ -1,7 +1,7 @@
 import { Connection, connect, set, MongooseOptions, ConnectOptions } from "mongoose";
-import { getEnv, isDevelopment } from "../utils/env";
 import { singleton, inject, injectable } from "tsyringe";
-import { ILogger } from "../services/loggers/ILogger";
+import { getEnv, isDevelopment } from "@utils/env";
+import { ILogger } from "@logger/logger.interface";
 
 type ConnectionOptions = { mongooseOptions?: MongooseOptions; connectionOptions?: ConnectOptions };
 

@@ -1,11 +1,12 @@
+import "module-alias/register";
 import "reflect-metadata";
 import { config } from "dotenv";
 config();
-import "./config/di.config";
-import "./controllers";
-import { getEnv } from "./utils/env";
+import "@config/di.config";
+import "@controllers";
+import { getEnv } from "@utils/env";
 import { container } from "tsyringe";
-import { App } from "./App";
+import { App } from "@root/app";
 
 // Start server
 (async () => {

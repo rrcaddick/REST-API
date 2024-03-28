@@ -1,4 +1,4 @@
-import { Levels } from "./Levels";
+import { Levels } from "@logger/logger.enum";
 
 // Extracts all string keys from an object
 type StringKeys<T> = Extract<keyof T, string>;

@@ -1,5 +1,4 @@
-import { describe } from "node:test";
-import { getEnv, isDevelopment } from "../../utils/env";
+import { getEnv, isDevelopment } from "../env";
 
 describe("getEvn", () => {
   process.env.TEST_ENV = "Test Variable";

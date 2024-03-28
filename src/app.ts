@@ -1,9 +1,9 @@
-import cookieParser from "cookie-parser";
-import express, { urlencoded, json, Express, Router, RequestHandler } from "express";
-import { IDbConnection } from "./config/MongoDb";
 import morgan from "morgan";
+import cookieParser from "cookie-parser";
 import { inject, injectable, singleton } from "tsyringe";
-import { ILogger } from "./services/loggers/ILogger";
+import express, { urlencoded, json, Express, Router, RequestHandler } from "express";
+import { IDbConnection } from "@config/mongodb.config";
+import { ILogger } from "@logger/logger.interface";
 
 @singleton()
 @injectable()
@@ -11,10 +11,7 @@ export class App {
   private app: Express = express();
   private router: Router = Router();
 
-  constructor(
-    @inject("Logger") private logger: ILogger,
-    @inject("DbConnection") private dbConnection: IDbConnection
-  ) {
+  constructor(@inject("Logger") private logger: ILogger, @inject("DbConnection") private dbConnection: IDbConnection) {
     this.app = express();
     this.router = Router();
     this.initMiddleware();

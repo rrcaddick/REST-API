@@ -1,5 +1,5 @@
 import { container } from "tsyringe";
-import { App } from "../../App";
+import { App } from "@root/app";
 import { MetadataKeys } from "./types/MetadataKeys";
 import { RouteInfo } from "./types/RouteInfo";
 

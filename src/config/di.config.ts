@@ -1,11 +1,10 @@
 import { container } from "tsyringe";
-import { WinstonLogger } from "../services/loggers/Logger";
-import { ILogger } from "../services/loggers/ILogger";
-import { IDbConnection, MongoDbConnection } from "./MongoDb";
-import { User } from "../types/User";
-import { IRepository } from "../repositories/IRepository";
-import { MongooseUserRepository } from "../repositories/UserRepository";
+import { LoggerService } from "@logger/logger.service";
+import { ILogger } from "@logger/logger.interface";
+import { IDbConnection, MongoDbConnection } from "@config/mongodb.config";
+import { IUser } from "@user/user.interface";
+import { IRepository, MongooseUserRepository } from "@infrastructure/repositories";
 
-container.register<ILogger>("Logger", { useClass: WinstonLogger });
+container.register<ILogger>("Logger", { useClass: LoggerService });
 container.register<IDbConnection>("DbConnection", { useClass: MongoDbConnection });
-container.register<IRepository<User>>("UserRepository", { useClass: MongooseUserRepository });
+container.register<IRepository<IUser>>("UserRepository", { useClass: MongooseUserRepository });
