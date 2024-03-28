@@ -1,4 +1,4 @@
-import { getEnv, isDevelopment } from "../env";
+import { getEnv, isDevelopment } from "@utils/env";
 
 describe("getEvn", () => {
   process.env.TEST_ENV = "Test Variable";

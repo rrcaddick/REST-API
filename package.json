@@ -6,7 +6,7 @@
   "author": "Ray Caddick",
   "license": "MIT",
   "scripts": {
-    "start:build": "tsc -w",
+    "start:build": "tsc -w --project tsconfig.build.json",
     "start:run": "nodemon --inspect=9229 dist/server.js",
     "start": "concurrently npm:start:*",
     "test:watch": "jest --watch",
@@ -55,6 +55,7 @@
     "nodemon": "^3.1.0",
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.2",
+    "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.3"
   }
 }

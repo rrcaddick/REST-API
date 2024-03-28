@@ -1,14 +1,14 @@
 import "reflect-metadata";
-import { MongoDbConnection } from "../mongodb.config";
+import { MongoDbConnection } from "@config/mongodb.config";
 import { connect, set } from "mongoose";
-import { getEnv, isDevelopment } from "../../utils/env";
+import { getEnv, isDevelopment } from "@utils/env";
 
 jest.mock("mongoose", () => ({
   connect: jest.fn(),
   set: jest.fn(),
 }));
 
-jest.mock("../../utils/env", () => ({
+jest.mock("@utils/env", () => ({
   getEnv: jest.fn(),
   isDevelopment: jest.fn(),
 }));

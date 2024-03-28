@@ -1,4 +1,4 @@
-import { parseEnumToObject } from "../enum";
+import { parseEnumToObject } from "@utils/enum";
 
 describe("parseEnumToObject", () => {
   it("it should correctly parse a string enum", () => {
