@@ -3,8 +3,12 @@ import { App } from "@root/app";
 import { MetadataKeys } from "./types/MetadataKeys";
 import { RouteInfo } from "./types/RouteInfo";
 
-const parsePath = (routePrefix: string | undefined, path: string): string =>
-  !routePrefix || routePrefix === "/" ? path : `${routePrefix}${path}`;
+const parsePath = (routePrefix: string | undefined, path: string): string => {
+  const normalizedPrefix = routePrefix && !routePrefix.startsWith("/") ? `/${routePrefix}` : routePrefix;
+  const normalizedPath = path.startsWith("/") ? path : `/${path}`;
+
+  return !normalizedPrefix || normalizedPrefix === "/" ? normalizedPath : `${normalizedPrefix}${normalizedPath}`;
+};
 
 export function controller(routePrefix?: string): ClassDecorator {
   return function (target: Function) {

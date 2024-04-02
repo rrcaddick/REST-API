@@ -1,2 +1,2 @@
-export * from "./controller";
-export * from "./route";
+export * from "./controller.decorator";
+export * from "./route.decorator";

@@ -24,6 +24,7 @@ export class MongoDbConnection implements IDbConnection {
       const { mongooseOptions = {}, connectionOptions = {} } = options ?? {};
 
       if (!mongoURI) {
+        this.logger.error("No MongoDb URI specified. Please check environment variables for MONGO_URI");
         throw new Error("No MongoDb URI specified. Please check environment variables for MONGO_URI");
       }
 
