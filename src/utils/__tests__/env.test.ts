@@ -1,4 +1,4 @@
-import { getEnv, isDevelopment } from "@utils/env";
+import { getEnv, isDevelopment, isTest } from "@utils/env";
 
 describe("env", () => {
   let initialProcess: NodeJS.ProcessEnv;
@@ -12,17 +12,23 @@ describe("env", () => {
   });
 
   describe("getEvn", () => {
-    process.env.TEST_ENV = "Test Variable";
-
     it("should return the correct env variable", () => {
+      process.env.TEST_ENV = "Test Variable";
       expect(getEnv("TEST_ENV")).toBe("Test Variable");
     });
   });
 
   describe("isDevelopment", () => {
-    process.env.NODE_ENV = "development";
     it("should return true in development environment", () => {
+      process.env.NODE_ENV = "development";
       expect(isDevelopment()).toBe(true);
+    });
+  });
+
+  describe("isTest", () => {
+    it("should return true in test environment", () => {
+      process.env.NODE_ENV = "test";
+      expect(isTest()).toBe(true);
     });
   });
 });

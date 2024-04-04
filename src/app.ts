@@ -12,8 +12,6 @@ export class App {
   private router: Router = Router();
 
   constructor(@inject("Logger") private logger: ILogger, @inject("DbConnection") private dbConnection: IDbConnection) {
-    this.app = express();
-    this.router = Router();
     this.initMiddleware();
   }
 
@@ -44,16 +42,16 @@ export class App {
     app.use(this.router);
   }
 
+  private async connectDb(): Promise<void> {
+    await this.dbConnection.connect();
+  }
+
   getApp(): Express {
     return this.app;
   }
 
   getRouter(): Router {
     return this.router;
-  }
-
-  private async connectDb(): Promise<void> {
-    await this.dbConnection.connect();
   }
 
   async start(port: number): Promise<void> {
@@ -65,6 +63,6 @@ export class App {
   }
 
   addMiddleware(middleware: RequestHandler): void {
-    this.app.use(middleware);
+    this.router.use(middleware);
   }
 }

@@ -3,7 +3,7 @@ import "@config/di.config";
 import { NextFunction, Request, Response } from "express";
 import { controller, get, post, patch } from "@controllers/decorators";
 
-// Mock App and router
+
 const mockRouter = {
   get: jest.fn(),
   post: jest.fn(),
