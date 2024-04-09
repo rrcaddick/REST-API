@@ -8,7 +8,7 @@ type RouteDecorator = (path: string) => TypedMethodDecorator<RequestHandler>;
 
 function routeBinder(method: HttpMethods): RouteDecorator {
   return (path: string): TypedMethodDecorator<RequestHandler> => {
-    return (target: Object, key: string | symbol, desc: TypedPropertyDescriptor<RequestHandler>): void => {
+    return (target: Object, key: string | symbol, _desc: TypedPropertyDescriptor<RequestHandler>): void => {
       const routeInfo: RouteInfo = { path, method };
       Reflect.defineMetadata(MetadataKeys.RouteInfo, routeInfo, target, key);
     };

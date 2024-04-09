@@ -1,15 +1,16 @@
 {
+  "entryFile": "src/server.ts",
+  "noImplicitAdditionalProperties": "ignore",
+  "controllerPathGlobs": ["src/**/*.controller.ts"],
+  "spec": {
+    "outputDirectory": "./dist",
+    "specVersion": 3
+  },
+  "routes": {
+    "routesDir": "./src",
+    "iocModule": "src/config/tsoa.ioc"
+  },
   "compilerOptions": {
-    "target": "ES6",
-    "lib": ["ES6", "DOM"],
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
-    "incremental": true,
-    "module": "commonjs",
-    "rootDir": "./src",
-    "moduleResolution": "Node",
-    "resolveJsonModule": true,
-    "baseUrl": "./",
     "paths": {
       "@root/*": ["src/*"],
       "@application": ["src/application"],
@@ -38,18 +39,6 @@
       "@repositories/*": ["src/infrastructure/repositories/*"],
       "@utils": ["src/utils"],
       "@utils/*": ["src/utils/*"]
-    },
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "types": ["reflect-metadata", "jest"],
-    "inlineSourceMap": true,
-    "outDir": "./dist",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "strictPropertyInitialization": false,
-    "skipLibCheck": true
+    }
   }
 }

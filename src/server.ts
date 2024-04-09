@@ -10,9 +10,11 @@ import { App } from "@root/app";
 
 // Start server
 (async () => {
-  const PORT = parseInt(getEnv("PORT") || "5000");
+  const PORT = parseInt(getEnv("PORT") ?? "5000");
 
   const app = container.resolve(App);
 
   await app.start(PORT);
+
+  await app.testUserService();
 })();

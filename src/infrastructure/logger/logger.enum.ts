@@ -1,4 +1,4 @@
-// TODO: Decide on adding fatal errors
+// TODO: Decide on adding fatal error level
 export enum Levels {
   error = 0,
   warn = 1,

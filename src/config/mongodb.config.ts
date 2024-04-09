@@ -6,9 +6,13 @@ import { ILogger } from "@logger/logger.interface";
 type ConnectionOptions = { mongooseOptions?: MongooseOptions; connectionOptions?: ConnectOptions };
 
 // TODO: Refactor - Remove getConnection methods and expose commonly used connection methods instead
+
+// TODO: Add reconnect logic
 export interface IDbConnection {
   connect(options?: ConnectionOptions): Promise<void>;
   getConnection(): Connection;
+  // Add disconnect
+  // Add reconnect
 }
 
 @singleton()

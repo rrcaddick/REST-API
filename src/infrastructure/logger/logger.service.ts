@@ -46,11 +46,6 @@ export class LoggerService implements ILogger {
     this.logger.debug(message);
   }
 
-  // TODO: Decide if it's required or safe to imclude the specific logger instance
-  // private getLogger() {
-  //   return this.logger;
-  // }
-
   private consoleFormat() {
     return format.combine(
       timestamp(),
@@ -60,7 +55,7 @@ export class LoggerService implements ILogger {
   }
 
   private levelFilter(level: string) {
-    return format((info, opts) => {
+    return format((info, _opts) => {
       return info.level === level ? info : false;
     })();
   }

@@ -1,12 +1,15 @@
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { inject, injectable, singleton } from "tsyringe";
-import express, { urlencoded, json, Express, Router, RequestHandler } from "express";
+import express, { urlencoded, json, Express, Router, RequestHandler, Request, Response } from "express";
 import { IDbConnection } from "@config/mongodb.config";
 import { ILogger } from "@logger/logger.interface";
+import { RegisterRoutes } from "./routes";
+import swaggerUi from "swagger-ui-express";
+import { UserService } from "./domain/user";
 
-@singleton()
 @injectable()
+@singleton()
 export class App {
   private app: Express = express();
   private router: Router = Router();
@@ -40,10 +43,24 @@ export class App {
 
     // Add express routes
     app.use(this.router);
+
+    RegisterRoutes(this.app);
+
+    app.use("/docs", swaggerUi.serve, async (_req: Request, res: Response) => {
+      return res.send(swaggerUi.generateHTML(await import("../dist/swagger.json")));
+    });
   }
 
   private async connectDb(): Promise<void> {
     await this.dbConnection.connect();
+  }
+
+  async testUserService() {
+    const userService = new UserService();
+
+    const user = await userService.get("66142385fd403448124617b1");
+
+    console.log("User Service", user);
   }
 
   getApp(): Express {

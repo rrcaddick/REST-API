@@ -1,15 +1,13 @@
-import { MongooseUserRepository } from "@repositories/user.repository";
+import { MongooseUserRepository } from "@root/infrastructure/repositories/typegoose/user.repository";
 import { IUser } from "@root/domain/user";
 import { IRepository } from "@repositories";
-import { ReturnModelType, getModelForClass } from "@typegoose/typegoose";
-import { UserSchema } from "@root/infrastructure/schemas/user.schema";
+import { getModelForClass } from "@typegoose/typegoose";
 
 const testUser: IUser = {
-  id: "1",
+  id: 1,
   name: "Ray",
   email: "test@test.com",
-  password: "test",
-  createdAt: new Date(),
+  phoneNumbers: [],
 };
 
 function getMockedToObject() {
@@ -69,14 +67,14 @@ describe("user.repository", () => {
 
       const errorUserRepo = new MongooseUserRepository();
 
-      await expect(errorUserRepo.update("1", testUser)).rejects.toThrow("User not found");
+      await expect(errorUserRepo.update("1", testUser)).rejects.toThrow(
+        "User not found"
+      );
     });
   });
 
   describe("delete", () => {
     it("should delete a user and return it", async () => {
-      const deletedUser = await userRepo.delete("1");
-
       await expect(userRepo.delete("1")).resolves.toEqual(testUser);
     });
 
