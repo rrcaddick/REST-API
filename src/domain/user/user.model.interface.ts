@@ -3,6 +3,7 @@ export interface IUserModel {
   email: string;
   name: string;
   phoneNumbers: string[];
+  roles: string[];
   addPhoneNumber(phoneNumber: string): void;
   removePhoneNumber(phoneNumber: string): void;
 }

@@ -10,6 +10,7 @@ export class UserModel implements IUserModel {
   public email: string;
   public name: string;
   public phoneNumbers: string[];
+  public roles: string[];
 
   constructor(userEntity: IUserEntity);
   constructor(userData: UserData);

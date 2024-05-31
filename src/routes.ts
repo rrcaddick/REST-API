@@ -20,6 +20,7 @@ const models: TsoaRoute.Models = {
             "email": {"dataType":"string","required":true},
             "name": {"dataType":"string","required":true},
             "phoneNumbers": {"dataType":"array","array":{"dataType":"string"},"required":true},
+            "roles": {"dataType":"array","array":{"dataType":"string"},"required":true},
         },
         "additionalProperties": true,
     },

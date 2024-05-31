@@ -49,6 +49,10 @@ export class UserModel extends BaseModel<IUserModel> implements IUserModel {
     return this.model.phoneNumbers;
   }
 
+  get roles() {
+    return [];
+  }
+
   set email(email: string) {
     this.model.email = email;
   }

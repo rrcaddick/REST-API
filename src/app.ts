@@ -5,8 +5,9 @@ import express, { urlencoded, json, Express, Router, RequestHandler, Request, Re
 import { IDbConnection } from "@config/mongodb.config";
 import { ILogger } from "@logger/logger.interface";
 import { RegisterRoutes } from "./routes";
-import swaggerUi from "swagger-ui-express";
+// import swaggerUi from "swagger-ui-express";
 import { UserService } from "./domain/user";
+import path from "path";
 
 @injectable()
 @singleton()
@@ -46,8 +47,11 @@ export class App {
 
     RegisterRoutes(this.app);
 
-    app.use("/docs", swaggerUi.serve, async (_req: Request, res: Response) => {
-      return res.send(swaggerUi.generateHTML(await import("../dist/swagger.json")));
+    app.use(express.static(path.join(__dirname, "public")));
+
+    // Register Swagger Documentation
+    app.use("/docs", (_req: Request, res: Response) => {
+      res.sendFile(path.join(__dirname, "public", "index.html"));
     });
   }
 
