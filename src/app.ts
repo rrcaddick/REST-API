@@ -2,12 +2,13 @@ import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { inject, injectable, singleton } from "tsyringe";
 import express, { urlencoded, json, Express, Router, RequestHandler, Request, Response } from "express";
-import { IDbConnection } from "@config/mongodb.config";
+// import { IDbConnection } from "@config/mongodb.config";
 import { ILogger } from "@logger/logger.interface";
 import { RegisterRoutes } from "./routes";
 // import swaggerUi from "swagger-ui-express";
-import { UserService } from "./domain/user";
+// import { UserService } from "./domain/user";
 import path from "path";
+import { IDataSource } from "./config/db.config.interface";
 
 @injectable()
 @singleton()
@@ -15,7 +16,7 @@ export class App {
   private app: Express = express();
   private router: Router = Router();
 
-  constructor(@inject("Logger") private logger: ILogger, @inject("DbConnection") private dbConnection: IDbConnection) {
+  constructor(@inject("Logger") private logger: ILogger, @inject("DataSource") private dataSource: IDataSource) {
     this.initMiddleware();
   }
 
@@ -56,15 +57,7 @@ export class App {
   }
 
   private async connectDb(): Promise<void> {
-    await this.dbConnection.connect();
-  }
-
-  async testUserService() {
-    const userService = new UserService();
-
-    const user = await userService.get("66142385fd403448124617b1");
-
-    console.log("User Service", user);
+    await this.dataSource.connect();
   }
 
   getApp(): Express {

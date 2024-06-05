@@ -3,7 +3,7 @@ import { IUserModel } from "./user.model.interface";
 import { IUserService } from "./user.service.interface";
 import { getIdentity } from "@root/utils/database";
 import { IUserRepository } from "@root/infrastructure/repositories/typegoose/user.repository.interface";
-import { IUserEntity } from "@root/infrastructure/entities/user.entity.interface";
+import { IUserEntity } from "@root/infrastructure/entities/sql/interfaces/user.entity.interface";
 import { UserModel } from "./user.model";
 
 @autoInjectable()
@@ -25,5 +25,5 @@ export class UserService implements IUserService {
     const user = await this.repo.create(newUser);
 
     return new UserModel(user);
-  } 
+  }
 }

@@ -1,4 +1,4 @@
-import { IUserEntity } from "@root/infrastructure/entities/user.entity.interface";
+import { IUserEntity } from "@root/infrastructure/entities/sql/interfaces/user.entity.interface";
 import { IUserModel } from "./user.model.interface";
 import { Identity } from "@root/common/types/indentity.type";
 
@@ -18,12 +18,10 @@ export class UserModel implements IUserModel {
   constructor(arg1: Identity | IUserEntity | UserData, email?: string, name?: string, phoneNumbers?: string[]) {
     switch (true) {
       case typeof arg1 === "object" && "email" in arg1: {
-        const { id, email, name, phoneNumbers } = arg1;
+        const { id, email } = arg1;
 
         this.id = id.toString();
         this.email = email;
-        this.name = name;
-        this.phoneNumbers = phoneNumbers;
         break;
       }
       default:

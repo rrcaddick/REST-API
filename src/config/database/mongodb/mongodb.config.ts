@@ -2,11 +2,11 @@ import { ILogger } from "@logger/logger.interface";
 import { getEnv } from "@root/utils/env";
 import { singleton, inject, injectable } from "tsyringe";
 import { MongoClient, ServerApiVersion } from "mongodb";
-// import { LoggerService } from "@root/infrastructure/logger";
+import { IDataSource } from "@root/config/db.config.interface";
 
 @singleton()
 @injectable()
-export class MongoDbConfig {
+export class MongoDbSource implements IDataSource {
   private uri: string = getEnv("MONGODB_URI") ?? "";
   private client: MongoClient;
 

@@ -11,12 +11,15 @@
     "build:docs": "tsoa spec-and-routes && node spectacle.build.js",
     "build:typescript": "tsc --project tsconfig.build.json",
     "build": "npm-run-all --sequential build:*",
-    "start:build": "tsoa spec-and-routes && node spectacle.build.js && tsc -w --project tsconfig.build.json",
+    "start:build": "tsoa spec-and-routes && tsc -w --project tsconfig.build.json",
     "start:run": "nodemon --inspect=9229 dist/server.js",
     "start": "npm-run-all --parallel start:*",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js",
+    "migrations:run": "npm run typeorm migration:run -- -d ./src/config/database/mysql/mysql.config.ts",
+    "migrations:generate": "node typeorm.migration.cli.js"
   },
   "_moduleAliases": {
     "@root": "./dist",
@@ -75,6 +78,7 @@
     "npm-run-all": "^4.1.5",
     "supertest": "^6.3.4",
     "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.4.3"
   }
