@@ -1,4 +1,4 @@
-import { container } from "tsyringe";
+import { container, Lifecycle } from "tsyringe";
 import { LoggerService } from "@logger/logger.service";
 import { ILogger } from "@logger/logger.interface";
 import { IDbConnection, MongoDbConnection } from "@config/mongodb.config";
@@ -13,7 +13,7 @@ import { MySqlDataSource } from "./database/mysql/mysql.config";
 // TODO: Create factories to dynamically return implentation based on env variables or config file
 container.register<ILogger>("Logger", { useClass: LoggerService });
 container.register<IDbConnection>("DbConnection", { useClass: MongoDbConnection });
-container.register<IDataSource>("DataSource", { useClass: MySqlDataSource });
+container.register<IDataSource>("DataSource", { useClass: MySqlDataSource }, { lifecycle: Lifecycle.Singleton });
 
 // User
 container.register<IUserModel>("UserModel", { useClass: UserModel });

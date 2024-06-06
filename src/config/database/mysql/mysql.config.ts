@@ -1,3 +1,4 @@
+import { join } from "path";
 import { DataSource } from "typeorm";
 import { ILogger } from "@root/infrastructure/logger";
 import { inject, injectable } from "tsyringe";
@@ -22,7 +23,7 @@ export class MySqlDataSource implements IDataSource {
       database: "raytech_store",
       logging: true,
       entities: [UserEntity, RoleEntity, UserRolesEntity],
-      migrations: ["./src/config/database/mysql/migrations/*.ts"],
+      migrations: [join(__dirname, "migrations", "*{.ts,.js}")],
     });
   }
 
