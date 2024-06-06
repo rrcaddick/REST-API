@@ -7,12 +7,16 @@ import { UserEntity } from "@entities/sql/typeorm/user.entity";
 @Entity("user_roles")
 export class UserRoleEntity extends TimestampEntity {
   @PrimaryColumn({ name: "user_id" })
-  @ManyToOne(() => RoleEntity, (user) => user.users)
-  @JoinColumn({ name: "user_id", referencedColumnName: "id" })
-  users: number;
+  public userId: number;
 
   @PrimaryColumn({ name: "role_id" })
-  @ManyToOne(() => UserEntity, (role) => role.roles)
-  @JoinColumn({ name: "role_id", referencedColumnName: "id" })
-  roles: number;
+  public roleId: number;
+
+  @ManyToOne(() => UserEntity, (user) => user.roles)
+  @JoinColumn({ name: "user_id" })
+  public user: UserEntity;
+
+  @ManyToOne(() => RoleEntity, (role) => role.users)
+  @JoinColumn({ name: "role_id" })
+  public role: RoleEntity;
 }

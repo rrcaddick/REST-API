@@ -13,17 +13,6 @@ import type { Request as ExRequest, Response as ExResponse, RequestHandler, Rout
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
-    "UserRoleEntity": {
-        "dataType": "refObject",
-        "properties": {
-            "createdAt": {"dataType":"datetime","required":true},
-            "updatedAt": {"dataType":"datetime","required":true},
-            "users": {"dataType":"double","required":true},
-            "roles": {"dataType":"double","required":true},
-        },
-        "additionalProperties": true,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "UserEntity": {
         "dataType": "refObject",
         "properties": {
@@ -37,7 +26,33 @@ const models: TsoaRoute.Models = {
             "dateOfBirth": {"dataType":"datetime","required":true},
             "mobile": {"dataType":"string","required":true},
             "credit": {"dataType":"double","required":true},
-            "roles": {"dataType":"array","array":{"dataType":"refObject","ref":"UserRoleEntity"},"required":true},
+            "userRoles": {"dataType":"array","array":{"dataType":"refObject","ref":"UserRoleEntity"},"required":true},
+            "roles": {"dataType":"array","array":{"dataType":"refObject","ref":"RoleEntity"},"required":true},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "UserRoleEntity": {
+        "dataType": "refObject",
+        "properties": {
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+            "userId": {"dataType":"double","required":true},
+            "roleId": {"dataType":"double","required":true},
+            "user": {"ref":"UserEntity","required":true},
+            "role": {"ref":"RoleEntity","required":true},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "RoleEntity": {
+        "dataType": "refObject",
+        "properties": {
+            "createdAt": {"dataType":"datetime","required":true},
+            "updatedAt": {"dataType":"datetime","required":true},
+            "id": {"dataType":"double","required":true},
+            "roleName": {"dataType":"string","required":true},
+            "users": {"dataType":"array","array":{"dataType":"refObject","ref":"UserRoleEntity"},"required":true},
         },
         "additionalProperties": true,
     },
