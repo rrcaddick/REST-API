@@ -1,6 +1,6 @@
 import { ITimestampEntity } from "@entities/sql/interfaces/base.entity.interface";
 
-export interface IUserRoles extends ITimestampEntity {
+export interface IUserRoleEntity extends ITimestampEntity {
   userId: number;
   roleId: number;
 }

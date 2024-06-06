@@ -1,7 +1,7 @@
 import { Entity, Column, OneToMany } from "typeorm";
 import { IUserEntity } from "@entities/sql/interfaces/user.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
-import { UserRolesEntity } from "@entities/sql/typeorm/user.roles.entity";
+import { UserRoleEntity } from "@entities/sql/typeorm/user.roles.entity";
 
 @Entity("users")
 export class UserEntity extends BaseEntity implements IUserEntity {
@@ -26,6 +26,6 @@ export class UserEntity extends BaseEntity implements IUserEntity {
   @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
   credit: number;
 
-  @OneToMany(() => UserRolesEntity, (userRole) => userRole.user)
-  roles: UserRolesEntity[];
+  @OneToMany(() => UserRoleEntity, (role) => role.roles)
+  roles: UserRoleEntity[];
 }

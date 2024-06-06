@@ -2,6 +2,7 @@ import { IUserModel } from "@root/domain/user";
 import { IUserService } from "@root/domain/user/user.service.interface";
 import { RoleEntity } from "@root/infrastructure/entities/sql/typeorm/role.entity";
 import { UserEntity } from "@root/infrastructure/entities/sql/typeorm/user.entity";
+import { UserRoleEntity } from "@root/infrastructure/entities/sql/typeorm/user.roles.entity";
 import { Controller, Get, Path, Route } from "tsoa";
 import { injectable, inject } from "tsyringe";
 
@@ -26,20 +27,37 @@ export class UserController extends Controller {
   }
 
   @Get("")
-  public async getUsers(): Promise<RoleEntity> {
+  public async getUsers(): Promise<UserEntity> {
     const userRepo = this.dataSource.getClient().getRepository(UserEntity);
 
-    // const user = userRepo.create({
-    //   firstName: "Ray",
-    //   lastName: "Caddick",
-    //   email: "rrcaddick@gmail.com",
-    //   password: "Whatever123",
-    //   dateOfBirth: new Date("1990-03-01"),
-    //   mobile: "0763635909",
-    //   credit: 20,
-    // });
+    const user = userRepo.create({
+      firstName: "Ash",
+      lastName: "Caddick",
+      email: "ash7fire@gmail.com",
+      password: "Whatever123",
+      dateOfBirth: new Date("1990-03-01"),
+      mobile: "0763635909",
+      credit: 20,
+    });
 
-    // await userRepo.save(user);
+    await userRepo.save(user);
+
+    const roleRepo = this.dataSource.getClient().getRepository(RoleEntity);
+
+    const role = roleRepo.create({
+      roleName: "CUSTOMER",
+    });
+
+    await roleRepo.save(role);
+
+    const userRoleRepo = this.dataSource.getClient().getRepository(UserRoleEntity);
+
+    const userRole = userRoleRepo.create({
+      users: 1,
+      roles: 1,
+    });
+
+    await userRoleRepo.save(userRole);
 
     return await userRepo.find({ relations: ["roles"] });
   }
