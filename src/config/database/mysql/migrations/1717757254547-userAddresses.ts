@@ -38,6 +38,9 @@ export class UserAddresses1717757254547 implements MigrationInterface {
       `ALTER TABLE \`user_roles\` ADD CONSTRAINT \`fk_user_roles_user_id\` FOREIGN KEY (\`user_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`
     );
     await queryRunner.query(
+      `ALTER TABLE \`user_roles\` ADD CONSTRAINT \`fk_user_roles_role_id\` FOREIGN KEY (\`user_id\`) REFERENCES \`roles\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`
+    );
+    await queryRunner.query(
       `ALTER TABLE \`user_addresses\` ADD CONSTRAINT \`fk_user_addresses_user_id\` FOREIGN KEY (\`user_id\`) REFERENCES \`users\`(\`id\`) ON DELETE NO ACTION ON UPDATE NO ACTION`
     );
     await queryRunner.query(
