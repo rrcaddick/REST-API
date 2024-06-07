@@ -39,6 +39,7 @@ const models: TsoaRoute.Models = {
             "updatedAt": {"dataType":"datetime","required":true},
             "userId": {"dataType":"double","required":true},
             "roleId": {"dataType":"double","required":true},
+            "status": {"dataType":"boolean","required":true},
             "user": {"ref":"UserEntity","required":true},
             "role": {"ref":"RoleEntity","required":true},
         },

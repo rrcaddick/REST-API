@@ -1,7 +1,9 @@
 import { IAddressEntity } from "@entities/sql/interfaces/address.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
-import { Column } from "typeorm";
+import { Column, Entity, OneToMany } from "typeorm";
+import { UserAddressEntity } from "./user.address.entity";
 
+@Entity("addresses")
 export class AddressEntity extends BaseEntity implements IAddressEntity {
   @Column()
   street: string;
@@ -18,6 +20,9 @@ export class AddressEntity extends BaseEntity implements IAddressEntity {
   @Column()
   province: string;
 
-  @Column({ name: "post_code", length: 4 })
+  @Column({ name: "post_code" })
   postCode: number;
+
+  @OneToMany(() => UserAddressEntity, (user) => user.address)
+  users: UserAddressEntity[];
 }

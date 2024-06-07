@@ -8,6 +8,8 @@ import { LoggerService } from "@root/infrastructure/logger";
 import { UserEntity } from "@entities/sql/typeorm/user.entity";
 import { RoleEntity } from "@entities/sql/typeorm/role.entity";
 import { UserRoleEntity } from "@entities/sql/typeorm/user.roles.entity";
+import { AddressEntity } from "@entities/sql/typeorm/address.entity";
+import { UserAddressEntity } from "@entities/sql/typeorm/user.address.entity";
 
 @injectable()
 export class MySqlDataSource implements IDataSource {
@@ -22,7 +24,7 @@ export class MySqlDataSource implements IDataSource {
       password: "Whatever123",
       database: "raytech_store",
       logging: true,
-      entities: [UserEntity, RoleEntity, UserRoleEntity],
+      entities: [UserEntity, RoleEntity, UserRoleEntity, AddressEntity, UserAddressEntity],
       migrations: [join(__dirname, "migrations", "*{.ts,.js}")],
     });
   }
