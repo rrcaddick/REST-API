@@ -3,9 +3,9 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
 // import { ReviewEntity } from "@entities/sql/typeorm/review.entity";
 // import { SalesEntity } from "@entities/sql/typeorm/sales.entity";
 // import { ShoppingCartEntity } from "@entities/sql/typeorm/shopping_cart.entity";
-// import { WishlistItemEntity } from "@entities/sql/typeorm/wishlist_item.entity";
 // import { ReturnItemEntity } from "@entities/sql/typeorm/return_item.entity";
 // import { InventoryEntity } from "@entities/sql/typeorm/inventory.entity";
+import { WishlistItemEntity } from "@entities/sql/typeorm/wishlist-item.entity";
 import { IProductEntity } from "@entities/sql/interfaces/product.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
 import { ProductCategoryEntity } from "@entities/sql/typeorm/product-category.entity";
@@ -65,6 +65,9 @@ export class ProductEntity extends BaseEntity implements IProductEntity {
   @OneToMany(() => PromotionEntity, (promotion) => promotion.productId)
   public promotions: PromotionEntity[];
 
+  @OneToMany(() => WishlistItemEntity, (wishlistItem) => wishlistItem.productId)
+  wishlistItems: WishlistItemEntity[];
+
   // @OneToMany(() => ReviewEntity, (review) => review.product)
   // reviews: ReviewEntity[];
 
@@ -73,9 +76,6 @@ export class ProductEntity extends BaseEntity implements IProductEntity {
 
   // @OneToMany(() => ShoppingCartEntity, (cartItem) => cartItem.product)
   // shoppingCartItems: ShoppingCartEntity[];
-
-  // @OneToMany(() => WishlistItemEntity, (wishlistItem) => wishlistItem.product)
-  // wishlistItems: WishlistItemEntity[];
 
   // @OneToMany(() => ReturnItemEntity, (returnItem) => returnItem.product)
   // returnItems: ReturnItemEntity[];

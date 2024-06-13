@@ -19,6 +19,8 @@ import { InventoryEntity } from "@entities/sql/typeorm/inventory.entity";
 import { ProductPriceHistoryEntity } from "@entities/sql/typeorm/product-price-history.entity";
 import { PromotionEntity } from "@entities/sql/typeorm/promotion.entity";
 import { ProductImageEntity } from "@entities/sql/typeorm/product-image.entity";
+import { WishlistEntity } from "@entities/sql/typeorm/wishlist.entity";
+import { WishlistItemEntity } from "@entities/sql/typeorm/wishlist-item.entity";
 
 @injectable()
 export class MySqlDataSource implements IDataSource {
@@ -48,6 +50,8 @@ export class MySqlDataSource implements IDataSource {
         ProductPriceHistoryEntity,
         PromotionEntity,
         ProductImageEntity,
+        WishlistEntity,
+        WishlistItemEntity,
       ],
       migrations: [join(__dirname, "migrations", "*{.ts,.js}")],
     });

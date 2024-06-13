@@ -1,10 +1,11 @@
-import { Entity, Column, OneToMany, JoinColumn, ManyToMany, JoinTable } from "typeorm";
+import { Entity, Column, OneToMany, ManyToMany, JoinTable } from "typeorm";
 import { IUserEntity } from "@entities/sql/interfaces/user.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
 import { UserRoleEntity } from "@entities/sql/typeorm/user.roles.entity";
-import { RoleEntity } from "./role.entity";
-import { AddressEntity } from "./address.entity";
-import { UserAddressEntity } from "./user.address.entity";
+import { RoleEntity } from "@entities/sql/typeorm/role.entity";
+import { AddressEntity } from "@entities/sql/typeorm/address.entity";
+import { UserAddressEntity } from "@entities/sql/typeorm/user.address.entity";
+import { WishlistEntity } from "@entities/sql/typeorm/wishlist.entity";
 
 @Entity("users")
 export class UserEntity extends BaseEntity implements IUserEntity {
@@ -30,7 +31,6 @@ export class UserEntity extends BaseEntity implements IUserEntity {
   public credit: number;
 
   @OneToMany(() => UserRoleEntity, (userRole) => userRole.user)
-  @JoinColumn({ referencedColumnName: "user_id" })
   public userRoles: UserRoleEntity[];
 
   @ManyToMany(() => RoleEntity, (role) => role.users)
@@ -48,7 +48,6 @@ export class UserEntity extends BaseEntity implements IUserEntity {
   public roles: RoleEntity[];
 
   @OneToMany(() => UserAddressEntity, (userAddress) => userAddress.user)
-  @JoinColumn({ referencedColumnName: "user_id" })
   public userAddressses: UserAddressEntity[];
 
   @ManyToMany(() => AddressEntity, (address) => address.users)
@@ -66,4 +65,7 @@ export class UserEntity extends BaseEntity implements IUserEntity {
     },
   })
   public addresses: AddressEntity[];
+
+  @OneToMany(() => WishlistEntity, (wishlist) => wishlist.userId)
+  public promotions: WishlistEntity[];
 }
