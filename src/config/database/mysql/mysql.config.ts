@@ -1,15 +1,24 @@
 import { join } from "path";
 import { DataSource } from "typeorm";
-import { ILogger } from "@root/infrastructure/logger";
+import { NamingStrategy } from "@config/database/mysql/naming-strategy.config";
+import { ILogger } from "@infrastructure/logger";
 import { inject, injectable } from "tsyringe";
-import { IDataSource } from "@root/config/db.config.interface";
-import { getEnv } from "@root/utils/env";
-import { LoggerService } from "@root/infrastructure/logger";
+import { IDataSource } from "@config/db.config.interface";
+import { getEnv } from "@utils/env";
+import { LoggerService } from "@infrastructure/logger";
 import { UserEntity } from "@entities/sql/typeorm/user.entity";
 import { RoleEntity } from "@entities/sql/typeorm/role.entity";
 import { UserRoleEntity } from "@entities/sql/typeorm/user.roles.entity";
 import { AddressEntity } from "@entities/sql/typeorm/address.entity";
+import { AddressTypeEntity } from "@entities/sql/typeorm/address-type.entity";
 import { UserAddressEntity } from "@entities/sql/typeorm/user.address.entity";
+import { ProductEntity } from "@entities/sql/typeorm/product.entity";
+import { ProductCategoryEntity } from "@entities/sql/typeorm/product-category.entity";
+import { ProductVariantEntity } from "@entities/sql/typeorm/product-variant.entity";
+import { InventoryEntity } from "@entities/sql/typeorm/inventory.entity";
+import { ProductPriceHistoryEntity } from "@entities/sql/typeorm/product-price-history.entity";
+import { PromotionEntity } from "@entities/sql/typeorm/promotion.entity";
+import { ProductImageEntity } from "@entities/sql/typeorm/product-image.entity";
 
 @injectable()
 export class MySqlDataSource implements IDataSource {
@@ -24,7 +33,22 @@ export class MySqlDataSource implements IDataSource {
       password: "Whatever123",
       database: "raytech_store",
       logging: true,
-      entities: [UserEntity, RoleEntity, UserRoleEntity, AddressEntity, UserAddressEntity],
+      namingStrategy: new NamingStrategy(),
+      entities: [
+        UserEntity,
+        RoleEntity,
+        UserRoleEntity,
+        AddressEntity,
+        AddressTypeEntity,
+        UserAddressEntity,
+        ProductEntity,
+        ProductCategoryEntity,
+        ProductVariantEntity,
+        InventoryEntity,
+        ProductPriceHistoryEntity,
+        PromotionEntity,
+        ProductImageEntity,
+      ],
       migrations: [join(__dirname, "migrations", "*{.ts,.js}")],
     });
   }

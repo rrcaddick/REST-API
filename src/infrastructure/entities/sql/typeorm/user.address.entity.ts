@@ -3,6 +3,7 @@ import { IUserAddressEntity } from "@entities/sql//interfaces/user.address.entit
 import { TimestampEntity } from "@entities/sql/typeorm/base.entity";
 import { UserEntity } from "@entities/sql/typeorm/user.entity";
 import { AddressEntity } from "@entities/sql/typeorm/address.entity";
+import { AddressTypeEntity } from "./address-type.entity";
 
 @Entity("user_addresses")
 export class UserAddressEntity extends TimestampEntity implements IUserAddressEntity {
@@ -12,11 +13,13 @@ export class UserAddressEntity extends TimestampEntity implements IUserAddressEn
   @PrimaryColumn({ name: "address_id" })
   public addressId: number;
 
+  @PrimaryColumn({ name: "address_type_id" })
+  public addressTypeId: number;
+
   @ManyToOne(() => UserEntity, (user) => user.addresses)
   @JoinColumn({
     name: "user_id",
     referencedColumnName: "id",
-    foreignKeyConstraintName: "fk_user_addresses_user_id",
   })
   public user: UserEntity;
 
@@ -24,7 +27,13 @@ export class UserAddressEntity extends TimestampEntity implements IUserAddressEn
   @JoinColumn({
     name: "address_id",
     referencedColumnName: "id",
-    foreignKeyConstraintName: "fk_user_addresses_address_id",
   })
   public address: AddressEntity;
+
+  @ManyToOne(() => AddressTypeEntity, (addressType) => addressType.addresses)
+  @JoinColumn({
+    name: "address_type_id",
+    referencedColumnName: "id",
+  })
+  public addressType: AddressTypeEntity;
 }

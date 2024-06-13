@@ -603,7 +603,6 @@
                         "a501df8c-3778-4179-8dd9-816ee180cccc",
                         "7993de9b-81a0-41c3-8537-06ab8224051b",
                         "dfb46714-6ebe-45ee-87c2-921a4e629952",
-                        "6bfbd308-1423-457f-b5c3-714ef7932c1a",
                         "c685de8d-765c-46dd-a0e3-257286586868",
                         "a07c63ba-7cf7-4180-b4c3-2c676689dae2"
                     ],
@@ -3366,7 +3365,7 @@
             "type": "object",
             "properties": [
                 {
-                    "name": "ProductId",
+                    "name": "Id",
                     "hackoladeMeta": {},
                     "isActivated": true,
                     "signed": true,
@@ -3382,18 +3381,11 @@
                         "compositePrimaryKey",
                         "compositeUniqueKey"
                     ],
-                    "compositePrimaryKey": true,
+                    "compositePrimaryKey": false,
                     "compositeUniqueKey": false,
-                    "code": "product_id",
-                    "GUID": "63450dcc-f4f1-461d-94f7-ffa74411add0",
-                    "foreignCollection": "8446b01a-1573-4f59-a342-779a593a3c67",
-                    "foreignField": [
-                        "8446b01a-1573-4f59-a342-779a593a3c67",
-                        "1be0d615-8bbc-47c6-bbfa-5edd16ea935d"
-                    ],
-                    "relationshipType": "Foreign Key",
-                    "parentRelationship": "6bfbd308-1423-457f-b5c3-714ef7932c1a",
-                    "required": true,
+                    "code": "Id",
+                    "GUID": "bedfa871-af00-442d-93bc-0f47927ed91f",
+                    "autoincrement": true,
                     "error": {}
                 },
                 {
@@ -3401,7 +3393,7 @@
                     "hackoladeMeta": {},
                     "isActivated": true,
                     "signed": true,
-                    "primaryKey": true,
+                    "primaryKey": false,
                     "unique": false,
                     "exclusiveMinimum": false,
                     "exclusiveMaximum": false,
@@ -3413,7 +3405,7 @@
                         "compositePrimaryKey",
                         "compositeUniqueKey"
                     ],
-                    "compositePrimaryKey": true,
+                    "compositePrimaryKey": false,
                     "compositeUniqueKey": false,
                     "code": "product_variant_id",
                     "GUID": "bf1b7493-e9ea-4220-bcb6-95cd7da97970",
@@ -3424,7 +3416,7 @@
                     ],
                     "relationshipType": "Foreign Key",
                     "parentRelationship": "c5045230-9d13-44ab-859e-dd93f46c17ab",
-                    "required": true,
+                    "required": false,
                     "error": {}
                 },
                 {
@@ -3468,16 +3460,7 @@
             "primaryKey": [
                 {
                     "GUID": "5c9168ff-2146-48c8-a6f4-d7ec2261cfe1",
-                    "compositePrimaryKey": [
-                        {
-                            "keyId": "63450dcc-f4f1-461d-94f7-ffa74411add0",
-                            "type": "ascending"
-                        },
-                        {
-                            "keyId": "bf1b7493-e9ea-4220-bcb6-95cd7da97970",
-                            "type": "ascending"
-                        }
-                    ]
+                    "compositePrimaryKey": []
                 }
             ]
         },
@@ -5395,58 +5378,6 @@
             }
         },
         {
-            "name": "fk Inventory.product_id to Products.id",
-            "relationshipType": "Foreign Key",
-            "parentField": [
-                [
-                    "8446b01a-1573-4f59-a342-779a593a3c67",
-                    "1be0d615-8bbc-47c6-bbfa-5edd16ea935d"
-                ]
-            ],
-            "parentCardinality": "1",
-            "childField": [
-                [
-                    "287b33db-1398-4fef-b77c-153ee221417a",
-                    "63450dcc-f4f1-461d-94f7-ffa74411add0"
-                ]
-            ],
-            "isActivated": true,
-            "childCardinality": "0..n",
-            "GUID": "6bfbd308-1423-457f-b5c3-714ef7932c1a",
-            "parentCollection": "8446b01a-1573-4f59-a342-779a593a3c67",
-            "childCollection": "287b33db-1398-4fef-b77c-153ee221417a",
-            "hackoladeStyles": {
-                "GUID": "c27eed9d-b44c-4b14-b183-abf387b34949",
-                "autoPositioning": false,
-                "type": "Orthogonal",
-                "thickness": 2,
-                "color": "#79c4ff",
-                "dataType": "",
-                "shape": [
-                    {
-                        "x": 2915.034676239944,
-                        "y": 1350.8511351422483
-                    },
-                    {
-                        "x": 2887.8187565596872,
-                        "y": 1350.8511351422483
-                    },
-                    {
-                        "x": 2887.8187565596872,
-                        "y": 997.0311301406559
-                    },
-                    {
-                        "x": 2855.2695035460965,
-                        "y": 997.0311301406559
-                    }
-                ],
-                "sides": [
-                    "left",
-                    "right"
-                ]
-            }
-        },
-        {
             "name": "fk ProductPriceHistory.product_id to Products.id",
             "relationshipType": "Foreign Key",
             "parentField": [
@@ -5772,10 +5703,8 @@
         "a7afb1cc-5e94-4ee8-84e2-fe738607f8ed": "VariantName",
         "decc2a9e-20b9-4f4b-b934-60e2b3b3ece3": "VariantValue",
         "287b33db-1398-4fef-b77c-153ee221417a": "Inventory",
-        "63450dcc-f4f1-461d-94f7-ffa74411add0": "ProductId",
         "bf1b7493-e9ea-4220-bcb6-95cd7da97970": "ProductVariantId",
         "c5045230-9d13-44ab-859e-dd93f46c17ab": "fk Inventory.product_variant_id to ProductVariants.id",
-        "6bfbd308-1423-457f-b5c3-714ef7932c1a": "fk Inventory.product_id to Products.id",
         "423dbb54-141e-41bc-b1a5-c943370aad27": "Quantity",
         "d305a127-cc5f-42ef-9e64-c65b51a6eba6": "ProductPriceHistory",
         "7ed94b4c-bc0e-4d4e-b33a-588035104aa4": "ProductId",
@@ -5793,7 +5722,8 @@
         "61891130-3bcf-4405-b39b-64b3ba0eb792": "Date",
         "502b59d6-761a-4f14-9345-e6d08fca582a": "UserId",
         "2afcb15c-9370-4c74-a4ac-46bc49ee10b8": "fk Sales.user_id to Users.id",
-        "226481a7-47fd-4604-a6b6-009625220551": "CardToken"
+        "226481a7-47fd-4604-a6b6-009625220551": "CardToken",
+        "bedfa871-af00-442d-93bc-0f47927ed91f": "Id"
     },
     "definitions": {
         "type": "definitions",
@@ -5823,7 +5753,7 @@
             "modelName": false
         }
     },
-    "lastModifTS": "2024-06-04T08:24:24.628Z",
+    "lastModifTS": "2024-06-12T09:41:41.464Z",
     "persistenceSchemaVersion": "7",
     "isCreatedByPlugin": true,
     "pluginInformation": {

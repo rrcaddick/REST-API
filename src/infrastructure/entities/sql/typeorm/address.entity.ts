@@ -1,7 +1,7 @@
+import { Column, Entity, JoinColumn, OneToMany } from "typeorm";
 import { IAddressEntity } from "@entities/sql/interfaces/address.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
-import { Column, Entity, OneToMany } from "typeorm";
-import { UserAddressEntity } from "./user.address.entity";
+import { UserAddressEntity } from "@entities/sql/typeorm/user.address.entity";
 
 @Entity("addresses")
 export class AddressEntity extends BaseEntity implements IAddressEntity {
@@ -24,5 +24,6 @@ export class AddressEntity extends BaseEntity implements IAddressEntity {
   postCode: number;
 
   @OneToMany(() => UserAddressEntity, (user) => user.address)
+  @JoinColumn({ referencedColumnName: "address_id" })
   users: UserAddressEntity[];
 }

@@ -3,10 +3,10 @@ import { IBaseEntity, ITimestampEntity } from "@entities/sql/interfaces/base.ent
 
 @Entity()
 export abstract class TimestampEntity implements ITimestampEntity {
-  @CreateDateColumn()
+  @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
 
-  @UpdateDateColumn()
+  @UpdateDateColumn({ name: "updated_at" })
   updatedAt: Date;
 }
 

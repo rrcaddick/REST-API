@@ -16,7 +16,6 @@ export class UserRoleEntity extends TimestampEntity implements IUserRoleEntity {
   @JoinColumn({
     name: "user_id",
     referencedColumnName: "id",
-    foreignKeyConstraintName: "fk_user_roles_user_id",
   })
   public user: UserEntity;
 
@@ -24,7 +23,6 @@ export class UserRoleEntity extends TimestampEntity implements IUserRoleEntity {
   @JoinColumn({
     name: "role_id",
     referencedColumnName: "id",
-    foreignKeyConstraintName: "fk_user_roles_role_id",
   })
   public role: RoleEntity;
 }

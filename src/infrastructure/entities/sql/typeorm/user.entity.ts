@@ -9,29 +9,29 @@ import { UserAddressEntity } from "./user.address.entity";
 @Entity("users")
 export class UserEntity extends BaseEntity implements IUserEntity {
   @Column({ name: "first_name" })
-  firstName: string;
+  public firstName: string;
 
   @Column({ name: "last_name" })
-  lastName: string;
+  public lastName: string;
 
   @Column({ unique: true })
-  email: string;
+  public email: string;
 
   @Column()
-  password: string;
+  public password: string;
 
   @Column({ name: "date_of_birth", type: "date" })
-  dateOfBirth: Date;
+  public dateOfBirth: Date;
 
   @Column()
-  mobile: string;
+  public mobile: string;
 
   @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
-  credit: number;
+  public credit: number;
 
   @OneToMany(() => UserRoleEntity, (userRole) => userRole.user)
   @JoinColumn({ referencedColumnName: "user_id" })
-  userRoles: UserRoleEntity[];
+  public userRoles: UserRoleEntity[];
 
   @ManyToMany(() => RoleEntity, (role) => role.users)
   @JoinTable({
@@ -39,19 +39,17 @@ export class UserEntity extends BaseEntity implements IUserEntity {
     joinColumn: {
       name: "user_id",
       referencedColumnName: "id",
-      foreignKeyConstraintName: "fk_user_roles_user_id",
     },
     inverseJoinColumn: {
       name: "role_id",
       referencedColumnName: "id",
-      foreignKeyConstraintName: "fk_user_roles_role_id",
     },
   })
-  roles: RoleEntity[];
+  public roles: RoleEntity[];
 
   @OneToMany(() => UserAddressEntity, (userAddress) => userAddress.user)
   @JoinColumn({ referencedColumnName: "user_id" })
-  userAddressses: UserAddressEntity[];
+  public userAddressses: UserAddressEntity[];
 
   @ManyToMany(() => AddressEntity, (address) => address.users)
   @JoinTable({
@@ -67,5 +65,5 @@ export class UserEntity extends BaseEntity implements IUserEntity {
       foreignKeyConstraintName: "fk_user_addresses_address_id",
     },
   })
-  addresses: AddressEntity[];
+  public addresses: AddressEntity[];
 }
