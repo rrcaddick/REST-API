@@ -21,6 +21,12 @@ import { PromotionEntity } from "@entities/sql/typeorm/promotion.entity";
 import { ProductImageEntity } from "@entities/sql/typeorm/product-image.entity";
 import { WishlistEntity } from "@entities/sql/typeorm/wishlist.entity";
 import { WishlistItemEntity } from "@entities/sql/typeorm/wishlist-item.entity";
+import { OrderEntity } from "@entities/sql/typeorm/order.entity";
+import { OrderItemEntity } from "@entities/sql/typeorm/order-item.entity";
+import { InvoiceEntity } from "@entities/sql/typeorm/invoice.entity";
+import { CourrierEntity } from "@entities/sql/typeorm/courrier.entity";
+import { PaymentCardEntity } from "@entities/sql/typeorm/payment-card.entity";
+import { OrderStatusEntity } from "@entities/sql/typeorm/order-status.entity";
 
 @injectable()
 export class MySqlDataSource implements IDataSource {
@@ -52,6 +58,12 @@ export class MySqlDataSource implements IDataSource {
         ProductImageEntity,
         WishlistEntity,
         WishlistItemEntity,
+        OrderEntity,
+        OrderItemEntity,
+        InvoiceEntity,
+        CourrierEntity,
+        PaymentCardEntity,
+        OrderStatusEntity,
       ],
       migrations: [join(__dirname, "migrations", "*{.ts,.js}")],
     });

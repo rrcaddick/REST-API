@@ -6,6 +6,7 @@ import { RoleEntity } from "@entities/sql/typeorm/role.entity";
 import { AddressEntity } from "@entities/sql/typeorm/address.entity";
 import { UserAddressEntity } from "@entities/sql/typeorm/user.address.entity";
 import { WishlistEntity } from "@entities/sql/typeorm/wishlist.entity";
+import { OrderEntity } from "@entities/sql/typeorm/order.entity";
 
 @Entity("users")
 export class UserEntity extends BaseEntity implements IUserEntity {
@@ -56,16 +57,17 @@ export class UserEntity extends BaseEntity implements IUserEntity {
     joinColumn: {
       name: "user_id",
       referencedColumnName: "id",
-      foreignKeyConstraintName: "fk_user_addresses_user_id",
     },
     inverseJoinColumn: {
       name: "address_id",
       referencedColumnName: "id",
-      foreignKeyConstraintName: "fk_user_addresses_address_id",
     },
   })
   public addresses: AddressEntity[];
 
   @OneToMany(() => WishlistEntity, (wishlist) => wishlist.userId)
-  public promotions: WishlistEntity[];
+  public wishlists: WishlistEntity[];
+
+  @OneToMany(() => OrderEntity, (order) => order.userId)
+  public orders: OrderEntity[];
 }

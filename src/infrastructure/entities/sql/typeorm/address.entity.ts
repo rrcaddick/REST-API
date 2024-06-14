@@ -1,7 +1,9 @@
-import { Column, Entity, JoinColumn, OneToMany } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from "typeorm";
 import { IAddressEntity } from "@entities/sql/interfaces/address.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
 import { UserAddressEntity } from "@entities/sql/typeorm/user.address.entity";
+import { OrderEntity } from "./order.entity";
+import { UserEntity } from "./user.entity";
 
 @Entity("addresses")
 export class AddressEntity extends BaseEntity implements IAddressEntity {
@@ -23,7 +25,23 @@ export class AddressEntity extends BaseEntity implements IAddressEntity {
   @Column({ name: "post_code" })
   postCode: number;
 
-  @OneToMany(() => UserAddressEntity, (user) => user.address)
-  @JoinColumn({ referencedColumnName: "address_id" })
-  users: UserAddressEntity[];
+  @OneToMany(() => UserAddressEntity, (userAddress) => userAddress.user)
+  public userAddressses: UserAddressEntity[];
+
+  @ManyToMany(() => UserEntity, (user) => user.addresses)
+  @JoinTable({
+    name: "user_addresses",
+    joinColumn: {
+      name: "address_id",
+      referencedColumnName: "id",
+    },
+    inverseJoinColumn: {
+      name: "user_id",
+      referencedColumnName: "id",
+    },
+  })
+  public users: UserEntity[];
+
+  @OneToMany(() => OrderEntity, (order) => order.addressId)
+  orders: OrderEntity[];
 }

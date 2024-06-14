@@ -18,8 +18,8 @@ export class NamingStrategy extends DefaultNamingStrategy implements NamingStrat
   relationConstraintName(tableOrName: Table | string, columnNames: string[], referencedTablePath?: string): string {
     const tableName = tableOrName instanceof Table ? tableOrName.name : tableOrName;
     const refTableName = referencedTablePath ? referencedTablePath.split(".").pop() : "";
-    const joinColumnName = columnNames.join("_").toLowerCase();
-    return `REL_${tableName.toLowerCase()}__${refTableName}__${joinColumnName}`;
+    const joinColumnName = columnNames.join("").toLowerCase();
+    return `REL__${tableName.toLowerCase()}__${refTableName}__${joinColumnName}`;
   }
 
   // IDX__<table_name>__<column_names>
