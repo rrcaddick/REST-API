@@ -6,18 +6,16 @@ export class CreateProductTables1718267067757 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TABLE product_category (
-        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         id int NOT NULL AUTO_INCREMENT,
         name varchar(255) NOT NULL,
+        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id)
       ) ENGINE=InnoDB
     `);
 
     await queryRunner.query(`
       CREATE TABLE products (
-        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         id int NOT NULL AUTO_INCREMENT,
         name varchar(255) NOT NULL,
         description text NOT NULL,
@@ -29,6 +27,8 @@ export class CreateProductTables1718267067757 implements MigrationInterface {
         depth int NOT NULL,
         category_id int NOT NULL,
         brand varchar(255) NOT NULL,
+        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
         CONSTRAINT fk__product__product_category__category_id 
           FOREIGN KEY (category_id) REFERENCES product_category(id) 
@@ -37,12 +37,27 @@ export class CreateProductTables1718267067757 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
+    CREATE TABLE product_variants (
+      id int NOT NULL AUTO_INCREMENT,
+      product_id int NOT NULL,
+      variant_name varchar(255) NOT NULL,
+      variant_value varchar(255) NOT NULL,
+      created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+      updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
+      PRIMARY KEY (id),
+      CONSTRAINT FK__product_variants__products__product_id 
+        FOREIGN KEY (product_id) REFERENCES products(id) 
+        ON DELETE NO ACTION ON UPDATE NO ACTION
+    ) ENGINE=InnoDB
+  `);
+
+    await queryRunner.query(`
       CREATE TABLE inventory (
-        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         id int NOT NULL AUTO_INCREMENT,
         product_variant_id int NOT NULL,
         quantity int NOT NULL,
+        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
         CONSTRAINT FK__inventory__product_variants__product_variant_id 
           FOREIGN KEY (product_variant_id) REFERENCES product_variants(id) 
@@ -51,29 +66,14 @@ export class CreateProductTables1718267067757 implements MigrationInterface {
     `);
 
     await queryRunner.query(`
-      CREATE TABLE product_variants (
-        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-        id int NOT NULL AUTO_INCREMENT,
-        product_id int NOT NULL,
-        variant_name varchar(255) NOT NULL,
-        variant_value varchar(255) NOT NULL,
-        PRIMARY KEY (id),
-        CONSTRAINT FK__product_variants__products__product_id 
-          FOREIGN KEY (product_id) REFERENCES products(id) 
-          ON DELETE NO ACTION ON UPDATE NO ACTION
-      ) ENGINE=InnoDB
-    `);
-
-    await queryRunner.query(`
       CREATE TABLE product_price_history (
-        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         id int NOT NULL AUTO_INCREMENT,
         product_id int NOT NULL,
         price decimal(10,2) NOT NULL,
         start_date datetime NOT NULL,
         end_date datetime NOT NULL,
+        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
         CONSTRAINT FK__product_price_history__products__product_id 
           FOREIGN KEY (product_id) REFERENCES products(id) 
@@ -83,8 +83,6 @@ export class CreateProductTables1718267067757 implements MigrationInterface {
 
     await queryRunner.query(`
       CREATE TABLE promotions (
-        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         id int NOT NULL AUTO_INCREMENT,
         name varchar(255) NOT NULL,
         description text NOT NULL,
@@ -92,6 +90,8 @@ export class CreateProductTables1718267067757 implements MigrationInterface {
         start_date datetime NOT NULL,
         end_date datetime NOT NULL,
         product_id int NOT NULL,
+        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
         CONSTRAINT FK__promotions__products__product_id 
           FOREIGN KEY (product_id) REFERENCES products(id) 
@@ -101,11 +101,11 @@ export class CreateProductTables1718267067757 implements MigrationInterface {
 
     await queryRunner.query(`
       CREATE TABLE product_images (
-        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         id int NOT NULL AUTO_INCREMENT,
         product_id int NOT NULL,
         image_url varchar(255) NOT NULL,
+        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
         CONSTRAINT FK__product_images__products__product_id 
           FOREIGN KEY (product_id) REFERENCES products(id) 

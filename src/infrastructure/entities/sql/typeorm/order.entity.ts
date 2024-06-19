@@ -6,8 +6,9 @@ import { CourrierEntity } from "@entities/sql/typeorm/courrier.entity";
 import { UserEntity } from "@entities/sql/typeorm/user.entity";
 import { PaymentCardEntity } from "@entities/sql/typeorm/payment-card.entity";
 import { OrderStatusEntity } from "@entities/sql/typeorm/order-status.entity";
-import { InvoiceEntity } from "./invoice.entity";
-import { OrderItemEntity } from "./order-item.entity";
+import { InvoiceEntity } from "@entities/sql/typeorm/invoice.entity";
+import { OrderItemEntity } from "@entities/sql/typeorm/order-item.entity";
+import { ReturnEntity } from "@entities/sql/typeorm/return.entity";
 
 @Entity("orders")
 export class OrderEntity extends BaseEntity implements IOrderEntity {
@@ -75,4 +76,7 @@ export class OrderEntity extends BaseEntity implements IOrderEntity {
 
   @OneToOne(() => InvoiceEntity, (invoice) => invoice.orderId)
   invoice: InvoiceEntity;
+
+  @OneToOne(() => ReturnEntity, (returnEntity) => returnEntity.orderId)
+  return: ReturnEntity;
 }

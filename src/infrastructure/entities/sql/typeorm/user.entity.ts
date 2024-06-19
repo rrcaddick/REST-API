@@ -7,6 +7,8 @@ import { AddressEntity } from "@entities/sql/typeorm/address.entity";
 import { UserAddressEntity } from "@entities/sql/typeorm/user.address.entity";
 import { WishlistEntity } from "@entities/sql/typeorm/wishlist.entity";
 import { OrderEntity } from "@entities/sql/typeorm/order.entity";
+import { ShoppingCartEntity } from "./shopping-cart.entity";
+import { ReviewEntity } from "./review.entity";
 
 @Entity("users")
 export class UserEntity extends BaseEntity implements IUserEntity {
@@ -70,4 +72,10 @@ export class UserEntity extends BaseEntity implements IUserEntity {
 
   @OneToMany(() => OrderEntity, (order) => order.userId)
   public orders: OrderEntity[];
+
+  @OneToMany(() => ShoppingCartEntity, (shoppingCart) => shoppingCart.userId)
+  public shoppingCartItems: ShoppingCartEntity[];
+
+  @OneToMany(() => ReviewEntity, (review) => review.userId)
+  public reviews: ReviewEntity[];
 }

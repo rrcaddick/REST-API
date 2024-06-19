@@ -1,11 +1,5 @@
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from "typeorm";
-// import { ProductCategoryEntity } from "@entities/sql/typeorm/product_category.entity";
-// import { ReviewEntity } from "@entities/sql/typeorm/review.entity";
-// import { SalesEntity } from "@entities/sql/typeorm/sales.entity";
-// import { ShoppingCartEntity } from "@entities/sql/typeorm/shopping_cart.entity";
-// import { ReturnItemEntity } from "@entities/sql/typeorm/return_item.entity";
-// import { InventoryEntity } from "@entities/sql/typeorm/inventory.entity";
-import { WishlistItemEntity } from "@entities/sql/typeorm/wishlist-item.entity";
+import { ReviewEntity } from "@entities/sql/typeorm/review.entity";
 import { IProductEntity } from "@entities/sql/interfaces/product.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
 import { ProductCategoryEntity } from "@entities/sql/typeorm/product-category.entity";
@@ -17,34 +11,34 @@ import { ProductImageEntity } from "@entities/sql/typeorm/product-image.entity";
 @Entity("products")
 export class ProductEntity extends BaseEntity implements IProductEntity {
   @Column()
-  name: string;
+  public name: string;
 
   @Column({ type: "text" })
-  description: string;
+  public description: string;
 
   @Column({ type: "decimal", precision: 10, scale: 2 })
-  price: number;
+  public price: number;
 
   @Column()
-  weight: number;
+  public weight: number;
 
   @Column()
-  color: string;
+  public color: string;
 
   @Column()
-  length: number;
+  public length: number;
 
   @Column()
-  width: number;
+  public width: number;
 
   @Column()
-  depth: number;
+  public depth: number;
 
   @Column({ name: "category_id" })
-  categoryId: number;
+  public categoryId: number;
 
   @Column()
-  brand: string;
+  public brand: string;
 
   @ManyToOne(() => ProductCategoryEntity, (category) => category.id)
   @JoinColumn({
@@ -54,7 +48,7 @@ export class ProductEntity extends BaseEntity implements IProductEntity {
   public category: ProductCategoryEntity;
 
   @OneToMany(() => ProductVariantEntity, (variant) => variant.productId)
-  variants: ProductVariantEntity[];
+  public variants: ProductVariantEntity[];
 
   @OneToMany(() => ProductImageEntity, (productImage) => productImage.productId)
   public images: ProductImageEntity[];
@@ -65,21 +59,6 @@ export class ProductEntity extends BaseEntity implements IProductEntity {
   @OneToMany(() => PromotionEntity, (promotion) => promotion.productId)
   public promotions: PromotionEntity[];
 
-  @OneToMany(() => WishlistItemEntity, (wishlistItem) => wishlistItem.productId)
-  wishlistItems: WishlistItemEntity[];
-
-  // @OneToMany(() => ReviewEntity, (review) => review.product)
-  // reviews: ReviewEntity[];
-
-  // @OneToMany(() => SalesEntity, (sale) => sale.product)
-  // sales: SalesEntity[];
-
-  // @OneToMany(() => ShoppingCartEntity, (cartItem) => cartItem.product)
-  // shoppingCartItems: ShoppingCartEntity[];
-
-  // @OneToMany(() => ReturnItemEntity, (returnItem) => returnItem.product)
-  // returnItems: ReturnItemEntity[];
-
-  // @OneToMany(() => InventoryEntity, (inventory) => inventory.product)
-  // inventory: InventoryEntity[];
+  @OneToMany(() => ReviewEntity, (review) => review.product)
+  public reviews: ReviewEntity[];
 }

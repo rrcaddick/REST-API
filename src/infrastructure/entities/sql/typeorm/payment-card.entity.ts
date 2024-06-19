@@ -1,28 +1,32 @@
 import { Column, Entity, OneToMany } from "typeorm";
-import { IPaymentCardEntity } from "../interfaces/payment-card.entity.interface";
-import { BaseEntity } from "./base.entity";
-import { OrderEntity } from "./order.entity";
+import { IPaymentCardEntity } from "@entities/sql/interfaces/payment-card.entity.interface";
+import { BaseEntity } from "@entities/sql/typeorm/base.entity";
+import { OrderEntity } from "@entities/sql/typeorm/order.entity";
+import { RefundEntity } from "@entities/sql/typeorm/refund.entity";
 
 @Entity("payment_cards")
 export class PaymentCardEntity extends BaseEntity implements IPaymentCardEntity {
   @Column({ name: "card_type" })
-  cardType: string;
-  
+  public cardType: string;
+
   @Column({ name: "last_four_digits" })
-  lastFourDigits: string;
-  
+  public lastFourDigits: string;
+
   @Column({ name: "expiry_month" })
-  expiryMonth: number;
+  public expiryMonth: number;
 
   @Column({ name: "expiry_year" })
-  expiryYear: number;
-  
+  public expiryYear: number;
+
   @Column({ name: "card_token" })
-  cardToken: string;
+  public cardToken: string;
 
   @Column({ name: "user_id" })
-  userId: number;
+  public userId: number;
 
-  @OneToMany(() => OrderEntity, order => order.paymentCardId)
-  orders: OrderEntity[]
+  @OneToMany(() => OrderEntity, (order) => order.paymentCardId)
+  public orders: OrderEntity[];
+
+  @OneToMany(() => RefundEntity, (refund) => refund.paymentCardId)
+  public refunds: RefundEntity[];
 }

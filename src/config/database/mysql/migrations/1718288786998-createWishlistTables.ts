@@ -6,11 +6,11 @@ export class CreateWishlistTables1718288786998 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       CREATE TABLE wishlists (
-        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
-        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         id int NOT NULL AUTO_INCREMENT,
         name varchar(255) NOT NULL,
         user_id int NOT NULL,
+        created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+        updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
         CONSTRAINT FK__wishlists__users__user_id 
           FOREIGN KEY (user_id) REFERENCES users(id) 
@@ -20,14 +20,16 @@ export class CreateWishlistTables1718288786998 implements MigrationInterface {
 
     await queryRunner.query(`
       CREATE TABLE wishlist_items (
+        wishlist_id int NOT NULL,
+        product_variant_id int NOT NULL,
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-        wishlist_id int NOT NULL,
-        product_id int NOT NULL,
-        PRIMARY KEY (wishlist_id, product_id),
-        CONSTRAINT FK__wishlist_items__wishlists__wishlist_id FOREIGN KEY (wishlist_id) REFERENCES wishlists(id) ON DELETE NO ACTION ON UPDATE NO ACTION,
-        CONSTRAINT FK__wishlist_items__products__product_id 
-          FOREIGN KEY (product_id) REFERENCES products(id) 
+        PRIMARY KEY (wishlist_id, product_variant_id),
+        CONSTRAINT FK__wishlist_items__wishlists__wishlist_id 
+          FOREIGN KEY (wishlist_id) REFERENCES wishlists(id) 
+          ON DELETE NO ACTION ON UPDATE NO ACTION,
+        CONSTRAINT FK__wishlist_items__product_variants__product_variant_id 
+          FOREIGN KEY (product_variant_id) REFERENCES product_variants(id) 
           ON DELETE NO ACTION ON UPDATE NO ACTION
       ) ENGINE=InnoDB
     `);
@@ -36,7 +38,7 @@ export class CreateWishlistTables1718288786998 implements MigrationInterface {
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       ALTER TABLE wishlist_items 
-      DROP FOREIGN KEY FK__wishlist_items__products__product_id
+      DROP FOREIGN KEY FK__wishlist_items__product_variants__product_variant_id
     `);
 
     await queryRunner.query(`
