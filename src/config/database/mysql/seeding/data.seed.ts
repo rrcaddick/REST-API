@@ -1,9 +1,26 @@
-const axios = require("axios");
-const { UserEntity } = require("./infrastructure/entities/sql/typeorm/user.entity");
+import "module-alias/register";
+import "reflect-metadata";
+import { config } from "dotenv";
+config();
+import "@config/di.config";
+import axios from "axios";
+import { autoInjectable, inject } from "tsyringe";
+import { UserRepository } from "@repositories/sql/typeorm/user.repository";
+import { IDataSource } from "../../../db.config.interface";
 
-class DataSeedService {
-  userDataUrl = "https://dummyjson.com/users?limit=5";
-  categoryDataUrl = "https://dummyjson.com/products/categories?limit=0";
+@autoInjectable()
+export class DataSeedService {
+  private userDataUrl = "https://dummyjson.com/users?limit=5";
+  private categoryDataUrl = "https://dummyjson.com/products/categories?limit=0";
+
+  constructor(
+    @inject("UserRepo") private userRepo?: UserRepository,
+    @inject("DataSource") private dataSource?: IDataSource
+  ) {}
+
+  async connect() {
+    await this.dataSource?.connect();
+  }
 
   generateEmailDomain() {
     const domains = ["gmail", "yahoo", "outlook", "hotmail", "protonmail", "zoho", "icloud", "aol"];
@@ -11,7 +28,7 @@ class DataSeedService {
     return domains[Math.floor(Math.random() * domains.length)];
   }
 
-  extractUser(data) {
+  extractUser(data: any) {
     const { id, firstName, lastName, email, password, birthDate: dateOfBirth, phone } = data;
 
     const mobile = `+27${phone.replace(/-/g, "").substring(4)}`.substring(0, 12);
@@ -30,7 +47,7 @@ class DataSeedService {
     };
   }
 
-  extractAddresses(data) {
+  extractAddresses(data: any) {
     const homeAddress = data?.address;
 
     const workAddress = data?.company?.address;
@@ -38,7 +55,7 @@ class DataSeedService {
     return [homeAddress, workAddress];
   }
 
-  extractCardData(data) {
+  extractCardData(data: any) {
     const { cardType, cardNumber, cardExpire, iban } = data?.bank;
 
     return {
@@ -62,15 +79,17 @@ class DataSeedService {
   async seedUserData() {
     const response = await axios.get(this.userDataUrl);
 
+    const users = [];
+
     for (const data of response.data.users) {
-      const user = this.extractUser(data);
+      users.push(this.extractUser(data));
 
       const addresses = this.extractAddresses(data);
 
       const cardData = this.extractCardData(data);
-
-      // TODO:Write data to the database
     }
+
+    await this.userRepo?.insertMany(users);
   }
 
   async seedCategoryData() {
@@ -82,8 +101,15 @@ class DataSeedService {
       // TODO:Write data to the database
     }
   }
+
+  async initSeedData() {
+    await this.connect();
+    await this.seedUserData();
+  }
 }
 
-const seedService = new DataSeedService();
-
-// seedService.seedUserData();
+(async () => {
+  const dataSeedService = new DataSeedService();
+  await dataSeedService.initSeedData();
+  process.exit(0);
+})();

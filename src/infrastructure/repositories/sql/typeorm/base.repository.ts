@@ -1,5 +1,5 @@
 import { Repository, DataSource } from "typeorm";
-import { inject, autoInjectable, singleton } from "tsyringe";
+import { inject, autoInjectable } from "tsyringe";
 import { IDataSource } from "@root/config/db.config.interface";
 
 @autoInjectable()

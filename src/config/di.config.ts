@@ -9,6 +9,7 @@ import { UserService, IUserModel, UserModel } from "@user";
 // import { IUserRepository } from "@repositories/mongodb/typegoose/user.repository.interface";
 import { IDataSource } from "./db.config.interface";
 import { MySqlDataSource } from "./database/mysql/mysql.config";
+import { UserRepository } from "@repositories/sql/typeorm/user.repository";
 
 // TODO: Create factories to dynamically return implentation based on env variables or config file
 container.register<ILogger>("Logger", { useClass: LoggerService });
@@ -23,3 +24,4 @@ container.register<UserService>("UserService", { useClass: UserService });
 container.register<MongooseUserRepository>("UserRepository", { useClass: MongooseUserRepository });
 
 container.register("UserEntity", { useClass: UserEntity });
+container.register("UserRepo", { useClass: UserRepository });
