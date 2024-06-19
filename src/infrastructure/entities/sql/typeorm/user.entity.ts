@@ -1,4 +1,5 @@
-import { Entity, Column, OneToMany, ManyToMany, JoinTable } from "typeorm";
+import bcrypt from "bcrypt";
+import { Entity, Column, OneToMany, ManyToMany, JoinTable, BeforeInsert } from "typeorm";
 import { IUserEntity } from "@entities/sql/interfaces/user.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
 import { UserRoleEntity } from "@entities/sql/typeorm/user.roles.entity";
@@ -78,4 +79,11 @@ export class UserEntity extends BaseEntity implements IUserEntity {
 
   @OneToMany(() => ReviewEntity, (review) => review.userId)
   public reviews: ReviewEntity[];
+
+  @BeforeInsert()
+  async hashPassword(password: string) {
+    const salt = await bcrypt.genSalt();
+
+    this.password = await bcrypt.hash(password || this.password, salt);
+  }
 }

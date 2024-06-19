@@ -1,11 +1,10 @@
 import { join } from "path";
 import { DataSource } from "typeorm";
 import { NamingStrategy } from "@config/database/mysql/naming-strategy.config";
-import { ILogger } from "@infrastructure/logger";
+import { ILogger, LoggerService } from "@logger";
 import { inject, injectable } from "tsyringe";
 import { IDataSource } from "@config/db.config.interface";
 import { getEnv } from "@utils/env";
-import { LoggerService } from "@infrastructure/logger";
 import { UserEntity } from "@entities/sql/typeorm/user.entity";
 import { RoleEntity } from "@entities/sql/typeorm/role.entity";
 import { UserRoleEntity } from "@entities/sql/typeorm/user.roles.entity";

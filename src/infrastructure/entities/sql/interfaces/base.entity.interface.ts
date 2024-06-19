@@ -3,6 +3,6 @@ export interface IBaseEntity extends ITimestampEntity {
 }
 
 export interface ITimestampEntity {
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }

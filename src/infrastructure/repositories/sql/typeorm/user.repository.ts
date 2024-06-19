@@ -1,22 +1,23 @@
-import { UserEntity } from "@root/infrastructure/entities/sql/typeorm/user.entity";
-import { IUserEntity } from "@root/infrastructure/entities/sql/interfaces/user.entity.interface";
-import { EntityRepository, Repository } from "typeorm";
+import { UserEntity } from "@entities/sql/typeorm/user.entity";
+import { BaseRepository } from "./base.repository";
+import { inject, injectable } from "tsyringe";
+import { IUserEntity } from "@entities/sql/interfaces/user.entity.interface";
 
-export interface IBaseRepository<T> {
-  hasId(user: T): Boolean;
-  create(): T;
-  create(user: Partial<Omit<T, "id">>): T;
-  save(user: T): Promise<T>;
-  remove(user: T): Promise<T>;
-  // insert(user: T): Promise<T>;
-}
+@injectable()
+export class UserRepository extends BaseRepository<UserEntity> {
+  constructor(@inject("UserEntity") userEntity: UserEntity) {
+    super(userEntity);
+  }
 
-@EntityRepository(UserEntity)
-export class UserRepository extends Repository<UserEntity> implements IBaseRepository<IUserEntity> {
-  findByName(firstName: string, lastName: string) {
-    return this.createQueryBuilder("user")
-      .where("user.firstName = :firstName", { firstName })
-      .andWhere("user.lastName = :lastName", { lastName })
-      .getMany();
+  async create(data: Omit<IUserEntity, "id">): Promise<UserEntity> {
+    return await this.repo.save(data);
+  }
+
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    return await this.repo.findOneBy({ email });
+  }
+
+  async findByName(firstName: string, lastName: string): Promise<UserEntity[] | null> {
+    return await this.repo.findBy({ firstName, lastName });
   }
 }
