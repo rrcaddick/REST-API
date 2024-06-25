@@ -36,6 +36,8 @@ import { ReviewRepository } from "@repositories/sql/typeorm/review.repository";
 import { ProductPriceHistoryRepository } from "@repositories/sql/typeorm/product-price-history.repository";
 import { ProductImageRepository } from "@repositories/sql/typeorm/product-image.repository";
 import { InventoryRepository } from "@repositories/sql/typeorm/inventory.repository";
+import { CourrierEntity } from "@entities/sql/typeorm/courrier.entity";
+import { CourrierRepository } from "@repositories/sql/typeorm/courrier.repository";
 
 // TODO: Create factories to dynamically return implentation based on env variables or config file
 container.register<ILogger>("Logger", { useClass: LoggerService });
@@ -68,6 +70,7 @@ container.register("ReviewEntity", { useClass: ReviewEntity });
 container.register("ProductPriceHistoryEntity", { useClass: ProductPriceHistoryEntity });
 container.register("ProductImageEntity", { useClass: ProductImageEntity });
 container.register("InventoryEntity", { useClass: InventoryEntity });
+container.register("CourrierEntity", { useClass: CourrierEntity });
 
 // Repositories
 container.register("UserRepo", { useClass: UserRepository });
@@ -84,3 +87,4 @@ container.register("ReviewRepo", { useClass: ReviewRepository });
 container.register("ProductPriceHistoryRepo", { useClass: ProductPriceHistoryRepository });
 container.register("ProductImageRepo", { useClass: ProductImageRepository });
 container.register("InventoryRepo", { useClass: InventoryRepository });
+container.register("CourrierRepo", { useClass: CourrierRepository });

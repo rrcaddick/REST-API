@@ -20,6 +20,7 @@ import { ReviewRepository } from "@repositories/sql/typeorm/review.repository";
 import { ProductPriceHistoryRepository } from "@repositories/sql/typeorm/product-price-history.repository";
 import { ProductImageRepository } from "@repositories/sql/typeorm/product-image.repository";
 import { InventoryRepository } from "@repositories/sql/typeorm/inventory.repository";
+import { CourrierRepository } from "@repositories/sql/typeorm/courrier.repository";
 
 const categoryIds: { [key: string]: number } = {
   beauty: 1,
@@ -69,7 +70,8 @@ export class DataSeedService {
     @inject("ReviewRepo") private reviewRepo?: ReviewRepository,
     @inject("ProductPriceHistoryRepo") private productPriceHistoryRepo?: ProductPriceHistoryRepository,
     @inject("ProductImageRepo") private productImageRepo?: ProductImageRepository,
-    @inject("InventoryRepo") private inventoryRepo?: InventoryRepository
+    @inject("InventoryRepo") private inventoryRepo?: InventoryRepository,
+    @inject("CourrierRepo") private courrierRepo?: CourrierRepository
   ) {}
 
   async connect() {
@@ -384,6 +386,43 @@ export class DataSeedService {
     await this.inventoryRepo?.insertMany(inventory);
   }
 
+  private async seedCourrierData() {
+    const couriers = [
+      {
+        id: 1,
+        name: "FedEx",
+        contactNumber: "18004633339",
+        shippingCost: 10.99,
+      },
+      {
+        id: 2,
+        name: "DHL",
+        contactNumber: "18002255345",
+        shippingCost: 12.5,
+      },
+      {
+        id: 3,
+        name: "UPS",
+        contactNumber: "18007425877",
+        shippingCost: 9.99,
+      },
+      {
+        id: 4,
+        name: "USPS",
+        contactNumber: "18002758777",
+        shippingCost: 8.5,
+      },
+      {
+        id: 5,
+        name: "TNT",
+        contactNumber: "18005585555",
+        shippingCost: 11.75,
+      },
+    ];
+
+    await this.courrierRepo?.insertMany(couriers);
+  }
+
   public async seedData() {
     await this.connect();
 
@@ -398,6 +437,8 @@ export class DataSeedService {
     await this.seedUserData();
 
     await this.seedProductData();
+
+    await this.seedCourrierData();
   }
 
   public async clearData() {
@@ -424,6 +465,8 @@ export class DataSeedService {
     await this.productRepo?.deletAll();
 
     await this.productCategoryRepo?.deletAll();
+
+    await this.courrierRepo?.deletAll();
   }
 }
 

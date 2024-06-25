@@ -9,7 +9,7 @@ export class CreateOrderTables1718361328834 implements MigrationInterface {
         id int NOT NULL AUTO_INCREMENT,
         name varchar(255) NOT NULL,
         contact_number varchar(255) NOT NULL,
-        shipping_cost varchar(255) NOT NULL,
+        shipping_cost decimal(10,2) NOT NULL,
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id)

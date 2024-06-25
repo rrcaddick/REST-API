@@ -12,7 +12,7 @@ export class CourrierEntity extends BaseEntity implements ICourrierEntity {
   public contactNumber: string;
 
   @Column({ name: "shipping_cost" })
-  public shippingCost: string;
+  public shippingCost: number;
 
   @OneToMany(() => OrderEntity, (order) => order.courrierId)
   public orders: OrderEntity[];
