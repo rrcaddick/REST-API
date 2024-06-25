@@ -1,11 +1,11 @@
 import { Entity, Column, ManyToOne, JoinColumn, OneToOne } from "typeorm";
-import { IProductVariantEntity } from "@entities/sql/interfaces/product-variant.entity.interface";
+// import { IproductEntity } from "@entities/sql/interfaces/product-variant.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
 import { ProductEntity } from "@entities/sql/typeorm/product.entity";
 import { InventoryEntity } from "@entities/sql/typeorm/inventory.entity";
 
 @Entity("product_variants")
-export class ProductVariantEntity extends BaseEntity implements IProductVariantEntity {
+class productEntity extends BaseEntity {
   @Column({ name: "product_id" })
   public productId: number;
 
@@ -22,6 +22,6 @@ export class ProductVariantEntity extends BaseEntity implements IProductVariantE
   })
   public product: ProductEntity;
 
-  @OneToOne(() => InventoryEntity, (inventory) => inventory.productVariantId)
+  @OneToOne(() => InventoryEntity, (inventory) => inventory.productId)
   public inventory: InventoryEntity;
 }

@@ -1,5 +1,5 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { IUserAddressEntity } from "@entities/sql//interfaces/user.address.entity.interface";
+import { IUserAddressEntity } from "@root/infrastructure/entities/sql/interfaces/user-address.entity.interface";
 import { TimestampEntity } from "@entities/sql/typeorm/base.entity";
 import { UserEntity } from "@entities/sql/typeorm/user.entity";
 import { AddressEntity } from "@entities/sql/typeorm/address.entity";

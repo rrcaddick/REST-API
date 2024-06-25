@@ -7,13 +7,12 @@ import { IDataSource } from "@config/db.config.interface";
 import { getEnv } from "@utils/env";
 import { UserEntity } from "@entities/sql/typeorm/user.entity";
 import { RoleEntity } from "@entities/sql/typeorm/role.entity";
-import { UserRoleEntity } from "@entities/sql/typeorm/user.roles.entity";
+import { UserRoleEntity } from "@root/infrastructure/entities/sql/typeorm/user-role.entity";
 import { AddressEntity } from "@entities/sql/typeorm/address.entity";
 import { AddressTypeEntity } from "@entities/sql/typeorm/address-type.entity";
-import { UserAddressEntity } from "@entities/sql/typeorm/user.address.entity";
+import { UserAddressEntity } from "@root/infrastructure/entities/sql/typeorm/user-address.entity";
 import { ProductEntity } from "@entities/sql/typeorm/product.entity";
 import { ProductCategoryEntity } from "@entities/sql/typeorm/product-category.entity";
-import { ProductVariantEntity } from "@entities/sql/typeorm/product-variant.entity";
 import { InventoryEntity } from "@entities/sql/typeorm/inventory.entity";
 import { ProductPriceHistoryEntity } from "@entities/sql/typeorm/product-price-history.entity";
 import { PromotionEntity } from "@entities/sql/typeorm/promotion.entity";
@@ -56,7 +55,6 @@ export class MySqlDataSource implements IDataSource {
         UserAddressEntity,
         ProductEntity,
         ProductCategoryEntity,
-        ProductVariantEntity,
         InventoryEntity,
         ProductPriceHistoryEntity,
         PromotionEntity,

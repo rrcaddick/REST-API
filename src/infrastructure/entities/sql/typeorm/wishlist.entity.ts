@@ -1,8 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from "typeorm";
-import { IWishlistEntity } from "../interfaces/wishlist.entity.interface";
-import { BaseEntity } from "./base.entity";
-import { UserEntity } from "./user.entity";
-import { WishlistItemEntity } from "./wishlist-item.entity";
+import { IWishlistEntity } from "@entities/sql/interfaces/wishlist.entity.interface";
+import { BaseEntity } from "@entities/sql/typeorm/base.entity";
+import { UserEntity } from "@entities/sql/typeorm/user.entity";
+import { WishlistItemEntity } from "@entities/sql/typeorm/wishlist-item.entity";
 
 @Entity({ name: "wishlists" })
 export class WishlistEntity extends BaseEntity implements IWishlistEntity {

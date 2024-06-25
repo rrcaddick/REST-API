@@ -3,7 +3,7 @@ import { IProductCategoryEntity } from "@entities/sql/interfaces/product-categor
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
 import { ProductEntity } from "@entities/sql/typeorm/product.entity";
 
-@Entity("product_category")
+@Entity("product_categories")
 export class ProductCategoryEntity extends BaseEntity implements IProductCategoryEntity {
   @Column()
   public name: string;

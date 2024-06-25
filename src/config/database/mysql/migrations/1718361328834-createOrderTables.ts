@@ -46,12 +46,11 @@ export class CreateOrderTables1718361328834 implements MigrationInterface {
       `CREATE TABLE orders (
         id int NOT NULL AUTO_INCREMENT,
         order_date date NOT NULL,
-        shipped_date date NOT NULL,
+        shipped_date date NULL,
         total_due decimal(10,2) NOT NULL,
         user_id int NOT NULL,
         address_id int NOT NULL,
         courrier_id int NOT NULL,
-        payment_id int NOT NULL,
         order_status_id int NOT NULL,
         payment_card_id int NULL,
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
@@ -102,18 +101,18 @@ export class CreateOrderTables1718361328834 implements MigrationInterface {
       `CREATE TABLE order_items (
         id int NOT NULL AUTO_INCREMENT,
         order_id int NOT NULL,
-        product_variant_id int NOT NULL,
+        product_id int NOT NULL,
         price decimal(10,2) NOT NULL,
         quantity int NOT NULL,
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-        PRIMARY KEY (id, order_id, product_variant_id),
+        PRIMARY KEY (id, order_id, product_id),
         CONSTRAINT FK__order_items__orders__order_id 
           FOREIGN KEY (order_id) REFERENCES orders(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION,
-        CONSTRAINT FK__order_items__product_variants__product_variant_id 
-          FOREIGN KEY (product_variant_id) REFERENCES product_variants(id) 
+        CONSTRAINT FK__order_items__products__product_id 
+          FOREIGN KEY (product_id) REFERENCES products(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION
       ) ENGINE=InnoDB`
@@ -132,7 +131,7 @@ export class CreateOrderTables1718361328834 implements MigrationInterface {
     `);
     await queryRunner.query(`
       ALTER TABLE order_items 
-      DROP FOREIGN KEY FK__order_items__product_variants__product_variant_id
+      DROP FOREIGN KEY FK__order_items__products__product_id
     `);
     await queryRunner.query(`
       ALTER TABLE orders 

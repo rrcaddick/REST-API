@@ -10,7 +10,7 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
         user_id int NOT NULL,
         product_id int NOT NULL,
         rating int NOT NULL,
-        review text NOT NULL,
+        comment text NULL,
         review_date datetime NOT NULL,
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
@@ -49,17 +49,17 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
     await queryRunner.query(
       `CREATE TABLE return_items (
         return_id int NOT NULL,
-        product_variant_id int NOT NULL,
+        product_id int NOT NULL,
+        quantity int NOT NULL,
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-        quantity int NOT NULL,
-        PRIMARY KEY (return_id, product_variant_id),
+        PRIMARY KEY (return_id, product_id),
         CONSTRAINT FK_return_items_returns_return_id 
           FOREIGN KEY (return_id) REFERENCES returns(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION,
-        CONSTRAINT FK_return_items_product_variants_product_variant_id 
-          FOREIGN KEY (product_variant_id) REFERENCES product_variants(id) 
+        CONSTRAINT FK_return_items_products_product_id 
+          FOREIGN KEY (product_id) REFERENCES products(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION
       ) ENGINE=InnoDB`
@@ -87,20 +87,20 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
     );
 
     await queryRunner.query(
-      `CREATE TABLE shopping_cart (
+      `CREATE TABLE shopping_carts (
         id int NOT NULL AUTO_INCREMENT,
         user_id int NOT NULL,
-        product_variant_id int NOT NULL,
+        product_id int NOT NULL,
         quantity int NOT NULL,
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
-        CONSTRAINT FK_shopping_cart_users_user_id 
+        CONSTRAINT FK_shopping_carts_users_user_id 
           FOREIGN KEY (user_id) REFERENCES users(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION,
-        CONSTRAINT FK_shopping_cart_product_variants_product_variant_id 
-          FOREIGN KEY (product_variant_id) REFERENCES product_variants(id) 
+        CONSTRAINT FK_shopping_carts_products_product_id 
+          FOREIGN KEY (product_id) REFERENCES products(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION
       ) ENGINE=InnoDB`
@@ -109,16 +109,16 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
     await queryRunner.query(
       `CREATE TABLE sales (
         id int NOT NULL AUTO_INCREMENT,
+        user_id int NOT NULL,
+        product_id int NOT NULL,
         date datetime NOT NULL,
         quantity int NOT NULL,
         price decimal(10,2) NOT NULL,
-        product_variant_id int NOT NULL,
-        user_id int NOT NULL,
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
-        CONSTRAINT FK_sales_product_variants_product_variant_id 
-          FOREIGN KEY (product_variant_id) REFERENCES product_variants(id) 
+        CONSTRAINT FK_sales_products_product_id 
+          FOREIGN KEY (product_id) REFERENCES products(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION,
         CONSTRAINT FK_sales_users_user_id 
@@ -136,15 +136,15 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
     `);
     await queryRunner.query(`
       ALTER TABLE sales 
-      DROP FOREIGN KEY FK_sales_product_variants_product_variant_id
+      DROP FOREIGN KEY FK_sales_products_product_id
     `);
     await queryRunner.query(`
-      ALTER TABLE shopping_cart 
-      DROP FOREIGN KEY FK_shopping_cart_users_user_id
+      ALTER TABLE shopping_carts 
+      DROP FOREIGN KEY FK_shopping_carts_users_user_id
     `);
     await queryRunner.query(`
-      ALTER TABLE shopping_cart 
-      DROP FOREIGN KEY FK_shopping_cart_product_variants_product_variant_id
+      ALTER TABLE shopping_carts 
+      DROP FOREIGN KEY FK_shopping_carts_products_product_id
     `);
     await queryRunner.query(`
       ALTER TABLE refunds 
@@ -164,7 +164,7 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
     `);
     await queryRunner.query(`
       ALTER TABLE return_items 
-      DROP FOREIGN KEY FK_return_items_product_variants_product_variant_id
+      DROP FOREIGN KEY FK_return_items_products_product_id
     `);
     await queryRunner.query(`
       ALTER TABLE reviews 
@@ -180,7 +180,7 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
     `);
 
     await queryRunner.query(`DROP TABLE sales`);
-    await queryRunner.query(`DROP TABLE shopping_cart`);
+    await queryRunner.query(`DROP TABLE shopping_carts`);
     await queryRunner.query(`DROP TABLE refunds`);
     await queryRunner.query(`DROP TABLE returns`);
     await queryRunner.query(`DROP TABLE return_items`);

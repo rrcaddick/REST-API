@@ -13,6 +13,8 @@
     "build": "npm-run-all --sequential build:*",
     "start:build": "tsoa spec-and-routes && tsc -w --project tsconfig.build.json",
     "start:run": "nodemon --inspect=9229 dist/server.js",
+    "start:dev": "nodemon --inspect=9229 dist/server.js && tsc -w --project tsconfig.build.json",
+    "debug": "nodemon --exec \"node --inspect=9229 --require ts-node/register src/server.ts\"",
     "start": "npm-run-all --parallel start:*",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",

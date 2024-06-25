@@ -1,3 +1,4 @@
+// TODO: Move to config/migrations folder
 const { exec } = require("child_process");
 
 const migrationName = process.argv[2];

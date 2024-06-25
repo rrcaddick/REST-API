@@ -10,14 +10,16 @@ import { App } from "@root/app";
 import { DataSeedService } from "./config/database/mysql/seeding/data.seed";
 
 const startServer = async () => {
-  const PORT = parseInt(getEnv("PORT") ?? "5000");
+  // const PORT = parseInt(getEnv("PORT") ?? "5000");
 
-  const app = container.resolve(App);
-  await app.start(PORT);
+  // const app = container.resolve(App);
+  // await app.start(PORT);
 
   const seedService = new DataSeedService();
 
-  await seedService.seedUserData();
+  await seedService.seedData();
+
+  // await seedService.clearData();
 };
 
 // Start Server

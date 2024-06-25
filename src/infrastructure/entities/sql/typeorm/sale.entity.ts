@@ -1,8 +1,8 @@
 import { ISaleEntity } from "@entities/sql/interfaces/sales.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
-import { ProductVariantEntity } from "./product-variant.entity";
-import { UserEntity } from "./user.entity";
+import { ProductEntity } from "@entities/sql/typeorm/product.entity";
+import { UserEntity } from "@entities/sql/typeorm/user.entity";
 
 @Entity("sales")
 export class SaleEntity extends BaseEntity implements ISaleEntity {
@@ -15,18 +15,18 @@ export class SaleEntity extends BaseEntity implements ISaleEntity {
   @Column({ type: "decimal", precision: 10, scale: 2 })
   public price: number;
 
-  @Column({ name: "product_variant_id" })
-  public productVariantId: number;
+  @Column({ name: "product_id" })
+  public productId: number;
 
   @Column({ name: "user_id" })
   public userId: number;
 
-  @ManyToOne(() => ProductVariantEntity, (productVariant) => productVariant.id)
+  @ManyToOne(() => ProductEntity, (product) => product.id)
   @JoinColumn({
-    name: "product_variant_id",
+    name: "product_id",
     referencedColumnName: "id",
   })
-  public productVariant: ProductVariantEntity;
+  public product: ProductEntity;
 
   @ManyToOne(() => UserEntity, (user) => user.id)
   @JoinColumn({

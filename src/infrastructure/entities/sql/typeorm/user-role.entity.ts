@@ -1,5 +1,5 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
-import { IUserRoleEntity } from "@entities/sql/interfaces/user.roles.entity.interface";
+import { IUserRoleEntity } from "@root/infrastructure/entities/sql/interfaces/user-role.entity.interface";
 import { TimestampEntity } from "@entities/sql/typeorm/base.entity";
 import { RoleEntity } from "@entities/sql/typeorm/role.entity";
 import { UserEntity } from "@entities/sql/typeorm/user.entity";

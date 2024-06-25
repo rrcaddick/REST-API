@@ -15,8 +15,8 @@ export class ReviewEntity extends BaseEntity implements IReviewEntity {
   @Column({ type: "int" })
   rating: number;
 
-  @Column({ type: "text" })
-  review: string;
+  @Column({ type: "text", nullable: true })
+  comment: string;
 
   @Column({ name: "review_date", type: "datetime" })
   reviewDate: string;

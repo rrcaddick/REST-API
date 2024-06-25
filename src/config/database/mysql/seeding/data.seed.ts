@@ -6,29 +6,82 @@ import "@config/di.config";
 import axios from "axios";
 import { autoInjectable, inject } from "tsyringe";
 import { UserRepository } from "@repositories/sql/typeorm/user.repository";
-import { IDataSource } from "../../../db.config.interface";
+import { IDataSource } from "@config/db.config.interface";
+import { RoleRepository } from "@repositories/sql/typeorm/role.repository";
+import { AddressTypeRepository } from "@repositories/sql/typeorm/address-type.repository";
+import { ProductCategoryRepository } from "@repositories/sql/typeorm/product-category.repository";
+import { OrderStatusRepository } from "@repositories/sql/typeorm/order-status.repository";
+import { AddressRepository } from "@repositories/sql/typeorm/address.respository";
+import { UserAddressRepository } from "@repositories/sql/typeorm/user-address.repository";
+import { PaymentCardRepository } from "@repositories/sql/typeorm/payment-card.repository";
+import { UserRoleRepository } from "@repositories/sql/typeorm/user-role.repository";
+
+const categoryIds: { [key: string]: number } = {
+  beauty: 1,
+  fragrances: 2,
+  furniture: 3,
+  groceries: 4,
+  "home-decoration": 5,
+  "kitchen-accessories": 6,
+  laptops: 7,
+  "mens-shirts": 8,
+  "mens-shoes": 9,
+  "mens-watches": 10,
+  "mobile-accessories": 11,
+  motorcycle: 12,
+  "skin-care": 13,
+  smartphones: 14,
+  "sports-accessories": 15,
+  sunglasses: 16,
+  tablets: 17,
+  tops: 18,
+  vehicle: 19,
+  "womens-bags": 20,
+  "womens-dresses": 21,
+  "womens-jewellery": 22,
+  "womens-shoes": 23,
+  "womens-watches": 24,
+};
 
 @autoInjectable()
 export class DataSeedService {
   private userDataUrl = "https://dummyjson.com/users?limit=5";
   private categoryDataUrl = "https://dummyjson.com/products/categories?limit=0";
+  private productDataUrl = "https://dummyjson.com/products?limit=0";
 
   constructor(
+    @inject("DataSource") private dataSource?: IDataSource,
     @inject("UserRepo") private userRepo?: UserRepository,
-    @inject("DataSource") private dataSource?: IDataSource
+    @inject("RoleRepo") private roleRepo?: RoleRepository,
+    @inject("UserRoleRepo") private userRoleRepo?: UserRoleRepository,
+    @inject("AddressTypeRepo") private addressTypeRepo?: AddressTypeRepository,
+    @inject("AddressRepo") private addressRepo?: AddressRepository,
+    @inject("UserAddressRepo") private userAddressRepo?: UserAddressRepository,
+    @inject("PaymentCardRepo") private paymentCardRepo?: PaymentCardRepository,
+    @inject("ProductCategoryRepo") private productCategoryRepo?: ProductCategoryRepository,
+    @inject("OrderStatusRepo") private orderStatusRepo?: OrderStatusRepository
   ) {}
 
   async connect() {
     await this.dataSource?.connect();
   }
 
-  generateEmailDomain() {
+  private generateRandomDate(startYear: number) {
+    const start = new Date(startYear, 0, 1).getTime();
+    const end = new Date().getTime();
+
+    const randomTimestamp = start + Math.random() * (end - start);
+
+    return new Date(randomTimestamp);
+  }
+
+  private generateEmailDomain() {
     const domains = ["gmail", "yahoo", "outlook", "hotmail", "protonmail", "zoho", "icloud", "aol"];
 
     return domains[Math.floor(Math.random() * domains.length)];
   }
 
-  extractUser(data: any) {
+  private extractUser(data: any) {
     const { id, firstName, lastName, email, password, birthDate: dateOfBirth, phone } = data;
 
     const mobile = `+27${phone.replace(/-/g, "").substring(4)}`.substring(0, 12);
@@ -47,15 +100,32 @@ export class DataSeedService {
     };
   }
 
-  extractAddresses(data: any) {
-    const homeAddress = data?.address;
+  private extractAddresses(data: any) {
+    const { address: street, city, state, postalCode: postCode } = data?.address;
 
-    const workAddress = data?.company?.address;
+    const {
+      name: buildingCompanyName,
+      address: { address: street1, city: city1, state: state1, postalCode: postCode1 },
+    } = data?.company;
 
-    return [homeAddress, workAddress];
+    return {
+      homeAddress: {
+        street,
+        city,
+        state,
+        postCode,
+      },
+      workAddress: {
+        buildingCompanyName,
+        street: street1,
+        city: city1,
+        state: state1,
+        postCode: postCode1,
+      },
+    };
   }
 
-  extractCardData(data: any) {
+  private extractCardData(data: any) {
     const { cardType, cardNumber, cardExpire, iban } = data?.bank;
 
     return {
@@ -68,48 +138,220 @@ export class DataSeedService {
     };
   }
 
-  async seedRoleData() {
-    const roles = ["ADMIN", "PRODUCT MANAGER", "FINANCE MANAGER", "CS AGENT", "CUSTOMER"];
+  private extractProductData(data: any) {
+    const {
+      title: name,
+      description,
+      price,
+      weight,
+      dimensions: { depth: length, width, height },
+      brand,
+      category,
+    } = data;
 
-    for (const role of roles) {
-      // TODO:Write data to the database
-    }
+    const categoryId = categoryIds[category];
+
+    return {
+      name,
+      description,
+      price,
+      weight,
+      length,
+      width,
+      height,
+      brand,
+      categoryId,
+    };
   }
 
-  async seedUserData() {
+  private extractReviewData(data: any) {
+    const reviews = [];
+
+    const productId = data.id;
+
+    for (const review of data.reviews) {
+      const userId = Math.floor(Math.random() * 208) + 1;
+      const { rating, comment, date } = review;
+      reviews.push({ userId, productId, rating, comment, reviewDate: date });
+    }
+
+    const reviewCount = Math.floor(Math.random() * 10) + 1;
+
+    for (let i = 0; i > reviewCount; i++) {
+      const userId = Math.floor(Math.random() * 208) + 1;
+      const randomRating = Math.floor(Math.random() * 5) + 1;
+      reviews.push({ userId, productId, rating: randomRating, reviewDate: this.generateRandomDate(2022) });
+    }
+
+    return reviews;
+  }
+
+  private async seedRoleData() {
+    const roles = ["ADMIN", "PRODUCT MANAGER", "FINANCE MANAGER", "CS AGENT", "CUSTOMER"];
+
+    await this.roleRepo?.insertMany(roles.map((name, index) => ({ id: index + 1, roleName: name })));
+  }
+
+  private async seedAddressTypeData() {
+    const roles = ["HOME", "WORK"];
+
+    await this.addressTypeRepo?.insertMany(roles.map((name, index) => ({ id: index + 1, addressType: name })));
+  }
+
+  private async seedOrderStatusData() {
+    const orderStatuses = [
+      { id: 1, status: "Pending", description: "The order has been created but not yet confirmed or processed" },
+      { id: 2, status: "Confirmed", description: "The order has been confirmed and is ready for processing" },
+      { id: 3, status: "Processing", description: "The order is currently being packed" },
+      { id: 4, status: "Shipped", description: "The order has been dispatched and is on its way to the customer" },
+      { id: 5, status: "Out for Delivery", description: "The order is out with the courier" },
+      { id: 6, status: "Delivered", description: "The order has been delivered to the customer" },
+      { id: 7, status: "Completed", description: "The order has been successfully completed" },
+      { id: 8, status: "Cancelled", description: "The order has been cancelled by the customer or the seller" },
+      { id: 9, status: "Failed", description: "The order processing failed due to payment or other issues" },
+      { id: 10, status: "Returned", description: "The customer has returned the order" },
+      { id: 11, status: "Refunded", description: "The customer has been refunded for the order" },
+      { id: 12, status: "On Hold", description: "The order is on hold, awaiting customer actions or issue resolution" },
+      { id: 13, status: "Awaiting Payment", description: "The order is waiting for payment confirmation" },
+      { id: 14, status: "Awaiting Fulfillment", description: "The order is waiting to be fulfilled" },
+      { id: 15, status: "Awaiting Shipment", description: "The order is waiting to be shipped" },
+      { id: 16, status: "Awaiting Pickup", description: "The order is ready for pickup by the customer" },
+      { id: 17, status: "Partially Shipped", description: "Only part of the order has been shipped" },
+      { id: 18, status: "Partially Delivered", description: "Only part of the order has been delivered" },
+      { id: 19, status: "Disputed", description: "There is a dispute regarding the order" },
+    ];
+
+    await this.orderStatusRepo?.insertMany(orderStatuses);
+  }
+
+  private async seedProductCategoryData() {
+    const response = await axios.get(this.categoryDataUrl);
+
+    const categories = [];
+    for (const [index, data] of response.data.entries()) {
+      const { name } = data;
+
+      categories.push({ id: index + 1, name });
+    }
+
+    await this.productCategoryRepo?.insertMany(categories);
+  }
+
+  private async seedUserData() {
     const response = await axios.get(this.userDataUrl);
 
     const users = [];
+    const userRoles = [];
+    const addresses = [];
+    const userAddresses = [];
+    const paymentsCards = [];
 
-    for (const data of response.data.users) {
+    for (const [index, data] of response.data.users.entries()) {
+      // Add Users
       users.push(this.extractUser(data));
 
-      const addresses = this.extractAddresses(data);
+      // Add UserRoles
+      // First 3 users are admin
+      if (index < 3) {
+        userRoles.push({ userId: data.id, roleId: 1 });
+      }
 
-      const cardData = this.extractCardData(data);
+      // Randomly Assign Employee Roles 10% of the time
+      if (Math.random() < 0.1 && index >= 3) {
+        userRoles.push({ userId: data.id, roleId: Math.floor(Math.random() * 3) + 2 });
+      }
+
+      // Customer role
+      userRoles.push({ userId: data.id, roleId: 5 });
+
+      // Add Addresses
+      const { homeAddress, workAddress } = this.extractAddresses(data);
+
+      const homeId = index * 2 + 1;
+      const workId = index * 2 + 2;
+
+      addresses.push({ id: homeId, ...homeAddress });
+      addresses.push({ id: workId, ...workAddress });
+
+      // Add userAddresses
+      userAddresses.push({ userId: data.id, addressId: homeId, addressTypeId: 1 });
+      userAddresses.push({ userId: data.id, addressId: workId, addressTypeId: 2 });
+
+      // Add Payment Cards
+      paymentsCards.push({ id: index + 1, ...this.extractCardData(data) });
     }
 
+    // Write users
     await this.userRepo?.insertMany(users);
+
+    // Write userRoles
+    await this.userRoleRepo?.insertMany(userRoles);
+
+    // Write addresses
+    await this.addressRepo?.insertMany(addresses);
+
+    // Write UserAddresses
+    await this.userAddressRepo?.insertMany(userAddresses);
+
+    // Write PaymentCards
+    await this.paymentCardRepo?.insertMany(paymentsCards);
   }
 
-  async seedCategoryData() {
-    const response = await axios.get(this.categoryDataUrl);
+  private async seedProductData() {
+    const response = await axios.get(this.productDataUrl);
+    const products = [];
+    const reviews = [];
 
-    for (const data of response.data) {
-      const { name } = data;
+    for (const [index, data] of response.data.products.entries()) {
+      // Add product
+      products.push(this.extractProductData(data));
 
-      // TODO:Write data to the database
+      // Add reviews
+      reviews.push(this.extractReviewData(data));
+
+      // Add product price history
+
+      // Add product images
+
+      // Add inventory
     }
   }
 
-  async initSeedData() {
+  public async seedData() {
     await this.connect();
+
+    await this.seedRoleData();
+
+    await this.seedAddressTypeData();
+
+    await this.seedProductCategoryData();
+
+    await this.seedOrderStatusData();
+
     await this.seedUserData();
+
+    await this.seedProductData();
+  }
+
+  public async clearData() {
+    await this.connect();
+
+    await this.userRoleRepo?.deletAll();
+    await this.userAddressRepo?.deletAll();
+
+    await this.roleRepo?.deletAll();
+    await this.addressTypeRepo?.deletAll();
+    await this.productCategoryRepo?.deletAll();
+    await this.orderStatusRepo?.deletAll();
+
+    await this.paymentCardRepo?.deletAll();
+    await this.userRepo?.deletAll();
+    await this.addressRepo?.deletAll();
   }
 }
 
-(async () => {
-  const dataSeedService = new DataSeedService();
-  await dataSeedService.initSeedData();
-  process.exit(0);
-})();
+// (async () => {
+//   const dataSeedService = new DataSeedService();
+//   await dataSeedService.seedData();
+//   process.exit(0);
+// })();

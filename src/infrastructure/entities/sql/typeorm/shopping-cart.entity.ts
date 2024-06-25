@@ -2,15 +2,15 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { IShoppingCartEntity } from "@entities/sql/interfaces/shopping-cart.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
 import { UserEntity } from "@entities/sql/typeorm/user.entity";
-import { ProductVariantEntity } from "@entities/sql/typeorm/product-variant.entity";
+import { ProductEntity } from "@entities/sql/typeorm/product.entity";
 
-@Entity("shopping_cart")
+@Entity("shopping_carts")
 export class ShoppingCartEntity extends BaseEntity implements IShoppingCartEntity {
   @PrimaryColumn({ name: "user_id " })
   userId: number;
 
-  @PrimaryColumn({ name: "product_variant_id " })
-  productVariantId: number;
+  @PrimaryColumn({ name: "product_id " })
+  productId: number;
 
   @Column()
   quantity: number;
@@ -22,10 +22,10 @@ export class ShoppingCartEntity extends BaseEntity implements IShoppingCartEntit
   })
   user: UserEntity;
 
-  @ManyToOne(() => ProductVariantEntity, (productVariant) => productVariant.id)
+  @ManyToOne(() => ProductEntity, (product) => product.id)
   @JoinColumn({
-    name: "product_variant_id",
+    name: "product_id",
     referencedColumnName: "id",
   })
-  productVariant: ProductVariantEntity;
+  product: ProductEntity;
 }
