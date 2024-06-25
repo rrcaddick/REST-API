@@ -26,6 +26,16 @@ import { UserAddressRepository } from "@repositories/sql/typeorm/user-address.re
 import { PaymentCardRepository } from "@repositories/sql/typeorm/payment-card.repository";
 import { UserRoleEntity } from "@entities/sql/typeorm/user-role.entity";
 import { UserRoleRepository } from "@repositories/sql/typeorm/user-role.repository";
+import { ProductEntity } from "@entities/sql/typeorm/product.entity";
+import { ReviewEntity } from "@entities/sql/typeorm/review.entity";
+import { ProductPriceHistoryEntity } from "@entities/sql/typeorm/product-price-history.entity";
+import { ProductImageEntity } from "@entities/sql/typeorm/product-image.entity";
+import { InventoryEntity } from "@entities/sql/typeorm/inventory.entity";
+import { ProductRepository } from "@repositories/sql/typeorm/product.repository";
+import { ReviewRepository } from "@repositories/sql/typeorm/review.repository";
+import { ProductPriceHistoryRepository } from "@repositories/sql/typeorm/product-price-history.repository";
+import { ProductImageRepository } from "@repositories/sql/typeorm/product-image.repository";
+import { InventoryRepository } from "@repositories/sql/typeorm/inventory.repository";
 
 // TODO: Create factories to dynamically return implentation based on env variables or config file
 container.register<ILogger>("Logger", { useClass: LoggerService });
@@ -53,6 +63,11 @@ container.register("UserAddressEntity", { useClass: UserAddressEntity });
 container.register("PaymentCardEntity", { useClass: PaymentCardEntity });
 container.register("ProductCategoryEntity", { useClass: ProductCategoryEntity });
 container.register("OrderStatusEntity", { useClass: OrderStatusEntity });
+container.register("ProductEntity", { useClass: ProductEntity });
+container.register("ReviewEntity", { useClass: ReviewEntity });
+container.register("ProductPriceHistoryEntity", { useClass: ProductPriceHistoryEntity });
+container.register("ProductImageEntity", { useClass: ProductImageEntity });
+container.register("InventoryEntity", { useClass: InventoryEntity });
 
 // Repositories
 container.register("UserRepo", { useClass: UserRepository });
@@ -64,3 +79,8 @@ container.register("UserAddressRepo", { useClass: UserAddressRepository });
 container.register("PaymentCardRepo", { useClass: PaymentCardRepository });
 container.register("ProductCategoryRepo", { useClass: ProductCategoryRepository });
 container.register("OrderStatusRepo", { useClass: OrderStatusRepository });
+container.register("ProductRepo", { useClass: ProductRepository });
+container.register("ReviewRepo", { useClass: ReviewRepository });
+container.register("ProductPriceHistoryRepo", { useClass: ProductPriceHistoryRepository });
+container.register("ProductImageRepo", { useClass: ProductImageRepository });
+container.register("InventoryRepo", { useClass: InventoryRepository });

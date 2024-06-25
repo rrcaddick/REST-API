@@ -6,10 +6,10 @@ import { ProductEntity } from "@entities/sql/typeorm/product.entity";
 
 @Entity("reviews")
 export class ReviewEntity extends BaseEntity implements IReviewEntity {
-  @PrimaryColumn({ name: "user_id " })
+  @PrimaryColumn({ name: "user_id" })
   userId: number;
 
-  @PrimaryColumn({ name: "product_id " })
+  @PrimaryColumn({ name: "product_id" })
   productId: number;
 
   @Column({ type: "int" })
@@ -19,7 +19,7 @@ export class ReviewEntity extends BaseEntity implements IReviewEntity {
   comment: string;
 
   @Column({ name: "review_date", type: "datetime" })
-  reviewDate: string;
+  reviewDate: Date;
 
   @ManyToOne(() => UserEntity, (user) => user.id)
   @JoinColumn({

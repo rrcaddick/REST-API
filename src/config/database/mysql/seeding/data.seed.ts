@@ -15,6 +15,11 @@ import { AddressRepository } from "@repositories/sql/typeorm/address.respository
 import { UserAddressRepository } from "@repositories/sql/typeorm/user-address.repository";
 import { PaymentCardRepository } from "@repositories/sql/typeorm/payment-card.repository";
 import { UserRoleRepository } from "@repositories/sql/typeorm/user-role.repository";
+import { ProductRepository } from "@repositories/sql/typeorm/product.repository";
+import { ReviewRepository } from "@repositories/sql/typeorm/review.repository";
+import { ProductPriceHistoryRepository } from "@repositories/sql/typeorm/product-price-history.repository";
+import { ProductImageRepository } from "@repositories/sql/typeorm/product-image.repository";
+import { InventoryRepository } from "@repositories/sql/typeorm/inventory.repository";
 
 const categoryIds: { [key: string]: number } = {
   beauty: 1,
@@ -45,7 +50,7 @@ const categoryIds: { [key: string]: number } = {
 
 @autoInjectable()
 export class DataSeedService {
-  private userDataUrl = "https://dummyjson.com/users?limit=5";
+  private userDataUrl = "https://dummyjson.com/users?limit=0";
   private categoryDataUrl = "https://dummyjson.com/products/categories?limit=0";
   private productDataUrl = "https://dummyjson.com/products?limit=0";
 
@@ -59,16 +64,21 @@ export class DataSeedService {
     @inject("UserAddressRepo") private userAddressRepo?: UserAddressRepository,
     @inject("PaymentCardRepo") private paymentCardRepo?: PaymentCardRepository,
     @inject("ProductCategoryRepo") private productCategoryRepo?: ProductCategoryRepository,
-    @inject("OrderStatusRepo") private orderStatusRepo?: OrderStatusRepository
+    @inject("OrderStatusRepo") private orderStatusRepo?: OrderStatusRepository,
+    @inject("ProductRepo") private productRepo?: ProductRepository,
+    @inject("ReviewRepo") private reviewRepo?: ReviewRepository,
+    @inject("ProductPriceHistoryRepo") private productPriceHistoryRepo?: ProductPriceHistoryRepository,
+    @inject("ProductImageRepo") private productImageRepo?: ProductImageRepository,
+    @inject("InventoryRepo") private inventoryRepo?: InventoryRepository
   ) {}
 
   async connect() {
     await this.dataSource?.connect();
   }
 
-  private generateRandomDate(startYear: number) {
-    const start = new Date(startYear, 0, 1).getTime();
-    const end = new Date().getTime();
+  private generateRandomDate(startDate: Date, endDate: Date = new Date()) {
+    const start = startDate.getTime();
+    const end = endDate.getTime();
 
     const randomTimestamp = start + Math.random() * (end - start);
 
@@ -140,6 +150,7 @@ export class DataSeedService {
 
   private extractProductData(data: any) {
     const {
+      id,
       title: name,
       description,
       price,
@@ -152,6 +163,7 @@ export class DataSeedService {
     const categoryId = categoryIds[category];
 
     return {
+      id,
       name,
       description,
       price,
@@ -159,31 +171,70 @@ export class DataSeedService {
       length,
       width,
       height,
-      brand,
+      brand: brand ?? "This one",
       categoryId,
     };
   }
 
-  private extractReviewData(data: any) {
+  private extractReviewData(data: any, reviewCount: number) {
     const reviews = [];
 
     const productId = data.id;
 
-    for (const review of data.reviews) {
+    for (const [index, review] of data.reviews.entries()) {
       const userId = Math.floor(Math.random() * 208) + 1;
       const { rating, comment, date } = review;
-      reviews.push({ userId, productId, rating, comment, reviewDate: date });
+      reviews.push({ id: reviewCount + index + 1, userId, productId, rating, comment, reviewDate: date });
     }
 
-    const reviewCount = Math.floor(Math.random() * 10) + 1;
+    const extraReviewCount = Math.floor(Math.random() * 10) + 1;
+    const startingId = reviewCount + data.reviews.length + 1;
 
-    for (let i = 0; i > reviewCount; i++) {
+    for (let i = 0; i < extraReviewCount; i++) {
       const userId = Math.floor(Math.random() * 208) + 1;
       const randomRating = Math.floor(Math.random() * 5) + 1;
-      reviews.push({ userId, productId, rating: randomRating, reviewDate: this.generateRandomDate(2022) });
+      reviews.push({
+        id: startingId + i,
+        userId,
+        productId,
+        rating: randomRating,
+        reviewDate: this.generateRandomDate(new Date(2022, 0, 1)),
+      });
     }
 
     return reviews;
+  }
+
+  private extractPriceHistoryData(data: any, priceHistoryCount: number) {
+    const { id: productId, price } = data;
+    const priceHistories = [];
+    const priceChanges = Math.floor(Math.random() * 4) + 1;
+    let startDate = new Date(2022, 0, 1);
+
+    for (let i = 0; i < priceChanges; i++) {
+      let endDate = this.generateRandomDate(startDate);
+      const discount = i + 1 / 10;
+      priceHistories.push({
+        id: priceHistoryCount + i + 1,
+        productId,
+        price: price * 1 - discount,
+        startDate: startDate,
+        endDate,
+      });
+      startDate = endDate;
+    }
+
+    return priceHistories;
+  }
+
+  private extractProductImages(data: any, productImageCount: number) {
+    const { id, images } = data;
+
+    return images.map((image: string, index: number) => ({
+      id: productImageCount + index + 1,
+      productId: id,
+      imageUrl: image,
+    }));
   }
 
   private async seedRoleData() {
@@ -301,20 +352,36 @@ export class DataSeedService {
     const response = await axios.get(this.productDataUrl);
     const products = [];
     const reviews = [];
+    const priceHistories = [];
+    const productImages = [];
+    const inventory = [];
 
     for (const [index, data] of response.data.products.entries()) {
       // Add product
       products.push(this.extractProductData(data));
 
       // Add reviews
-      reviews.push(this.extractReviewData(data));
+      reviews.push(...this.extractReviewData(data, reviews.length));
 
       // Add product price history
+      priceHistories.push(...this.extractPriceHistoryData(data, priceHistories.length));
 
       // Add product images
+      productImages.push(...this.extractProductImages(data, productImages.length));
 
       // Add inventory
+      inventory.push({ id: index + 1, productId: data.id, quantity: data.stock });
     }
+
+    await this.productRepo?.insertMany(products);
+
+    await this.reviewRepo?.insertMany(reviews);
+
+    await this.productPriceHistoryRepo?.insertMany(priceHistories);
+
+    await this.productImageRepo?.insertMany(productImages);
+
+    await this.inventoryRepo?.insertMany(inventory);
   }
 
   public async seedData() {
@@ -336,17 +403,27 @@ export class DataSeedService {
   public async clearData() {
     await this.connect();
 
+    await this.reviewRepo?.deletAll();
+
     await this.userRoleRepo?.deletAll();
     await this.userAddressRepo?.deletAll();
 
     await this.roleRepo?.deletAll();
     await this.addressTypeRepo?.deletAll();
-    await this.productCategoryRepo?.deletAll();
+
     await this.orderStatusRepo?.deletAll();
 
     await this.paymentCardRepo?.deletAll();
     await this.userRepo?.deletAll();
     await this.addressRepo?.deletAll();
+
+    await this.productPriceHistoryRepo?.deletAll();
+    await this.productImageRepo?.deletAll();
+    await this.inventoryRepo?.deletAll();
+
+    await this.productRepo?.deletAll();
+
+    await this.productCategoryRepo?.deletAll();
   }
 }
 

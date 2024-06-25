@@ -4,6 +4,6 @@ export interface IReviewEntity extends IBaseEntity {
   userId: number;
   productId: number;
   rating: number;
-  comment: string;
-  reviewDate: string;
+  comment?: string;
+  reviewDate: Date;
 }

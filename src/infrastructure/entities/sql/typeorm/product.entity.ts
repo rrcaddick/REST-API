@@ -22,22 +22,19 @@ export class ProductEntity extends BaseEntity implements IProductEntity {
   public weight: number;
 
   @Column()
-  public color: string;
-
-  @Column()
   public length: number;
 
   @Column()
   public width: number;
 
   @Column()
-  public depth: number;
-
-  @Column({ name: "category_id" })
-  public categoryId: number;
+  public height: number;
 
   @Column()
   public brand: string;
+
+  @Column({ name: "category_id" })
+  public categoryId: number;
 
   @ManyToOne(() => ProductCategoryEntity, (category) => category.id)
   @JoinColumn({

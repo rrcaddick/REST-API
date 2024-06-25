@@ -5,10 +5,9 @@ export interface IProductEntity extends IBaseEntity {
   description: string;
   price: number;
   weight: number;
-  color: string;
   length: number;
   width: number;
-  depth: number;
-  categoryId: number;
+  height: number;
   brand: string;
+  categoryId: number;
 }
