@@ -54,7 +54,7 @@ export class OrderEntity extends BaseEntity implements IOrderEntity {
   })
   courrier: CourrierEntity;
 
-  @Column({ name: "payment_id" })
+  @Column({ name: "payment_card_id" })
   paymentCardId: number;
 
   @ManyToOne(() => PaymentCardEntity, (paymentCard) => paymentCard.id)

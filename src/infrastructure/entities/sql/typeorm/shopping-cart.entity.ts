@@ -6,10 +6,10 @@ import { ProductEntity } from "@entities/sql/typeorm/product.entity";
 
 @Entity("shopping_carts")
 export class ShoppingCartEntity extends BaseEntity implements IShoppingCartEntity {
-  @PrimaryColumn({ name: "user_id " })
+  @PrimaryColumn({ name: "user_id" })
   userId: number;
 
-  @PrimaryColumn({ name: "product_id " })
+  @PrimaryColumn({ name: "product_id" })
   productId: number;
 
   @Column()

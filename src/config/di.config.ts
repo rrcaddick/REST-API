@@ -2,7 +2,7 @@ import { container, Lifecycle } from "tsyringe";
 import { LoggerService } from "@logger/logger.service";
 import { ILogger } from "@logger/logger.interface";
 import { IDbConnection, MongoDbConnection } from "@config/mongodb.config";
-// import { IUserEntity } from "@root/infrastructure/entities/sql/interfaces/user.entity.interface";
+// import { IUserEntity } from "@entities/sql/interfaces/user.entity.interface";
 import { MongooseUserRepository } from "@repositories/mongodb/typegoose";
 import { UserEntity } from "@entities/sql/typeorm/user.entity";
 import { UserService, IUserModel, UserModel } from "@user";
@@ -38,6 +38,28 @@ import { ProductImageRepository } from "@repositories/sql/typeorm/product-image.
 import { InventoryRepository } from "@repositories/sql/typeorm/inventory.repository";
 import { CourrierEntity } from "@entities/sql/typeorm/courrier.entity";
 import { CourrierRepository } from "@repositories/sql/typeorm/courrier.repository";
+import { PromotionEntity } from "@entities/sql/typeorm/promotion.entity";
+import { PromotionRepository } from "@repositories/sql/typeorm/promotions.repository";
+import { ShoppingCartEntity } from "@entities/sql/typeorm/shopping-cart.entity";
+import { ShoppingCartRepository } from "@repositories/sql/typeorm/shopping-cart.repository";
+import { WishlistEntity } from "@entities/sql/typeorm/wishlist.entity";
+import { WishlistItemEntity } from "@entities/sql/typeorm/wishlist-item.entity";
+import { WishlistRepository } from "@repositories/sql/typeorm/wishlist.repository";
+import { WishlistItemRepository } from "@repositories/sql/typeorm/wishlist-item.repository";
+import { OrderEntity } from "@entities/sql/typeorm/order.entity";
+import { OrderItemEntity } from "@entities/sql/typeorm/order-item.entity";
+import { ReturnEntity } from "@entities/sql/typeorm/return.entity";
+import { ReturnItemEntity } from "@entities/sql/typeorm/return-item.entity";
+import { RefundEntity } from "@entities/sql/typeorm/refund.entity";
+import { SaleEntity } from "@entities/sql/typeorm/sale.entity";
+import { InvoiceEntity } from "@entities/sql/typeorm/invoice.entity";
+import { OrderRepository } from "@repositories/sql/typeorm/order.repository";
+import { OrderItemRepository } from "@repositories/sql/typeorm/order-item.repository";
+import { ReturnRepository } from "@repositories/sql/typeorm/return.repository";
+import { ReturnItemRepository } from "@repositories/sql/typeorm/return-item.repository";
+import { RefundRepository } from "@repositories/sql/typeorm/refund.repository";
+import { SaleRepository } from "@repositories/sql/typeorm/sale.repository";
+import { InvoiceRepository } from "@repositories/sql/typeorm/invoice.repository";
 
 // TODO: Create factories to dynamically return implentation based on env variables or config file
 container.register<ILogger>("Logger", { useClass: LoggerService });
@@ -51,9 +73,9 @@ container.register<UserService>("UserService", { useClass: UserService });
 
 container.register<MongooseUserRepository>("UserRepository", { useClass: MongooseUserRepository });
 
-/////////////
-// TYPEORM //
-/////////////
+//////////////////////////////////////////////////////////////////////////////
+//                               TYPEORM                                    //
+//////////////////////////////////////////////////////////////////////////////
 
 // Entities
 container.register("UserEntity", { useClass: UserEntity });
@@ -71,6 +93,17 @@ container.register("ProductPriceHistoryEntity", { useClass: ProductPriceHistoryE
 container.register("ProductImageEntity", { useClass: ProductImageEntity });
 container.register("InventoryEntity", { useClass: InventoryEntity });
 container.register("CourrierEntity", { useClass: CourrierEntity });
+container.register("PromotionEntity", { useClass: PromotionEntity });
+container.register("ShoppingCartEntity", { useClass: ShoppingCartEntity });
+container.register("WishlistEntity", { useClass: WishlistEntity });
+container.register("WishlistItemEntity", { useClass: WishlistItemEntity });
+container.register("OrderEntity", { useClass: OrderEntity });
+container.register("OrderItemEntity", { useClass: OrderItemEntity });
+container.register("ReturnEntity", { useClass: ReturnEntity });
+container.register("ReturnItemEntity", { useClass: ReturnItemEntity });
+container.register("RefundEntity", { useClass: RefundEntity });
+container.register("SaleEntity", { useClass: SaleEntity });
+container.register("InvoiceEntity", { useClass: InvoiceEntity });
 
 // Repositories
 container.register("UserRepo", { useClass: UserRepository });
@@ -88,3 +121,14 @@ container.register("ProductPriceHistoryRepo", { useClass: ProductPriceHistoryRep
 container.register("ProductImageRepo", { useClass: ProductImageRepository });
 container.register("InventoryRepo", { useClass: InventoryRepository });
 container.register("CourrierRepo", { useClass: CourrierRepository });
+container.register("PromotionRepo", { useClass: PromotionRepository });
+container.register("ShoppingCartRepo", { useClass: ShoppingCartRepository });
+container.register("WishlistRepo", { useClass: WishlistRepository });
+container.register("WishlistItemRepo", { useClass: WishlistItemRepository });
+container.register("OrderRepo", { useClass: OrderRepository });
+container.register("OrderItemRepo", { useClass: OrderItemRepository });
+container.register("ReturnRepo", { useClass: ReturnRepository });
+container.register("ReturnItemRepo", { useClass: ReturnItemRepository });
+container.register("RefundRepo", { useClass: RefundRepository });
+container.register("SaleRepo", { useClass: SaleRepository });
+container.register("InvoiceRepo", { useClass: InvoiceRepository });

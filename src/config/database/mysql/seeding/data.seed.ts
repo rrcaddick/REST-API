@@ -21,6 +21,149 @@ import { ProductPriceHistoryRepository } from "@repositories/sql/typeorm/product
 import { ProductImageRepository } from "@repositories/sql/typeorm/product-image.repository";
 import { InventoryRepository } from "@repositories/sql/typeorm/inventory.repository";
 import { CourrierRepository } from "@repositories/sql/typeorm/courrier.repository";
+import { PromotionRepository } from "@repositories/sql/typeorm/promotions.repository";
+import { IUserEntity } from "@entities/sql/interfaces/user.entity.interface";
+import { IAddressEntity } from "@entities/sql/interfaces/address.entity.interface";
+import { IPaymentCardEntity } from "@entities/sql/interfaces/payment-card.entity.interface";
+import { IProductEntity } from "@entities/sql/interfaces/product.entity.interface";
+import { IReviewEntity } from "@entities/sql/interfaces/review.entity.interface";
+import { IProductPriceHistoryEntity } from "@entities/sql/interfaces/product-price-history.entity.interface";
+import { IProductImageEntity } from "@entities/sql/interfaces/product-image.entity.interface";
+import { ShoppingCartRepository } from "@repositories/sql/typeorm/shopping-cart.repository";
+import { IShoppingCartEntity } from "@entities/sql/interfaces/shopping-cart.entity.interface";
+import { IWishlistItemEntity } from "@entities/sql/interfaces/wishlist-item.entity.interface";
+import { WishlistRepository } from "@repositories/sql/typeorm/wishlist.repository";
+import { WishlistItemRepository } from "@repositories/sql/typeorm/wishlist-item.repository";
+import { IOrderItemEntity } from "@entities/sql/interfaces/order-item.entity.interface";
+import { IOrderEntity } from "@entities/sql/interfaces/order.entity.interface";
+import { IReturnItemEntity } from "@entities/sql/interfaces/return-item.entity.interface";
+import { IReturnEntity } from "@entities/sql/interfaces/return.entity.interface";
+import { IRefundEntity } from "@entities/sql/interfaces/refund.entity.interface";
+import { OrderRepository } from "@repositories/sql/typeorm/order.repository";
+import { OrderItemRepository } from "@repositories/sql/typeorm/order-item.repository";
+import { ReturnRepository } from "@repositories/sql/typeorm/return.repository";
+import { ReturnItemRepository } from "@repositories/sql/typeorm/return-item.repository";
+import { RefundRepository } from "@repositories/sql/typeorm/refund.repository";
+import { SaleRepository } from "@repositories/sql/typeorm/sale.repository";
+import { InvoiceRepository } from "@repositories/sql/typeorm/invoice.repository";
+
+interface IDummyUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  maidenName: string;
+  age: number;
+  gender: string;
+  email: string;
+  phone: string;
+  username: string;
+  password: string;
+  birthDate: string;
+  image: string;
+  bloodGroup: string;
+  height: number;
+  weight: number;
+  eyeColor: string;
+  hair: {
+    color: string;
+    type: string;
+  };
+  ip: string;
+  address: {
+    address: string;
+    city: string;
+    state: string;
+    stateCode: string;
+    postalCode: string;
+    coordinates: {
+      lat: number;
+      lng: number;
+    };
+    country: string;
+  };
+  macAddress: string;
+  university: string;
+  bank: {
+    cardExpire: string;
+    cardNumber: string;
+    cardType: string;
+    currency: string;
+    iban: string;
+  };
+  company: {
+    department: string;
+    name: string;
+    title: string;
+    address: {
+      address: string;
+      city: string;
+      state: string;
+      stateCode: string;
+      postalCode: string;
+      coordinates: {
+        lat: number;
+        lng: number;
+      };
+      country: string;
+    };
+  };
+  ein: string;
+  ssn: string;
+  userAgent: string;
+  crypto: {
+    coin: string;
+    wallet: string;
+    network: string;
+  };
+  role: string;
+}
+
+interface IDummyProduct {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
+  stock: number;
+  tags: string[];
+  brand: string;
+  sku: string;
+  weight: number;
+  dimensions: {
+    width: number;
+    height: number;
+    depth: number;
+  };
+  warrantyInformation: string;
+  shippingInformation: string;
+  availabilityStatus: string;
+  reviews: {
+    rating: number;
+    comment: string;
+    date: string;
+    reviewerName: string;
+    reviewerEmail: string;
+  }[];
+  returnPolicy: string;
+  minimumOrderQuantity: number;
+  meta: {
+    createdAt: string;
+    updatedAt: string;
+    barcode: string;
+    qrCode: string;
+  };
+  images: string[];
+  thumbnail: string;
+}
+
+type generatedOrderAndReturnItems = {
+  orderTotal: number;
+  orderedItems: IOrderItemEntity[];
+  returnTotal: number;
+  returnedItems: IReturnItemEntity[];
+};
 
 const categoryIds: { [key: string]: number } = {
   beauty: 1,
@@ -49,11 +192,18 @@ const categoryIds: { [key: string]: number } = {
   "womens-watches": 24,
 };
 
+const totalUsers = 208;
+const totalAddresses = totalUsers * 2;
+const totalProducts = 194;
+const totalCourriers = 5;
+const totalOrderStatuses = 19;
+
+// Bloated class on purpose, because it only serves one purpose on application initialization
 @autoInjectable()
 export class DataSeedService {
-  private userDataUrl = "https://dummyjson.com/users?limit=0";
+  private userDataUrl = `https://dummyjson.com/users?limit=${totalUsers}`;
   private categoryDataUrl = "https://dummyjson.com/products/categories?limit=0";
-  private productDataUrl = "https://dummyjson.com/products?limit=0";
+  private productDataUrl = `https://dummyjson.com/products?limit=${totalProducts}`;
 
   constructor(
     @inject("DataSource") private dataSource?: IDataSource,
@@ -71,14 +221,25 @@ export class DataSeedService {
     @inject("ProductPriceHistoryRepo") private productPriceHistoryRepo?: ProductPriceHistoryRepository,
     @inject("ProductImageRepo") private productImageRepo?: ProductImageRepository,
     @inject("InventoryRepo") private inventoryRepo?: InventoryRepository,
-    @inject("CourrierRepo") private courrierRepo?: CourrierRepository
+    @inject("CourrierRepo") private courrierRepo?: CourrierRepository,
+    @inject("PromotionRepo") private promotionRepo?: PromotionRepository,
+    @inject("ShoppingCartRepo") private shoppingCartRepo?: ShoppingCartRepository,
+    @inject("WishlistRepo") private wishlistRepo?: WishlistRepository,
+    @inject("WishlistItemRepo") private wishlistItemRepo?: WishlistItemRepository,
+    @inject("OrderRepo") private orderRepo?: OrderRepository,
+    @inject("OrderItemRepo") private orderItemRepo?: OrderItemRepository,
+    @inject("ReturnRepo") private returnRepo?: ReturnRepository,
+    @inject("ReturnItemRepo") private returnItemRepo?: ReturnItemRepository,
+    @inject("RefundRepo") private refundRepo?: RefundRepository,
+    @inject("SaleRepo") private saleRepo?: SaleRepository,
+    @inject("InvoiceRepo") private invoiceRepo?: InvoiceRepository
   ) {}
 
-  async connect() {
+  async connect(): Promise<void> {
     await this.dataSource?.connect();
   }
 
-  private generateRandomDate(startDate: Date, endDate: Date = new Date()) {
+  private generateRandomDate(startDate: Date, endDate: Date = new Date()): Date {
     const start = startDate.getTime();
     const end = endDate.getTime();
 
@@ -87,33 +248,39 @@ export class DataSeedService {
     return new Date(randomTimestamp);
   }
 
-  private generateEmailDomain() {
+  private generateEmailDomain(): string {
     const domains = ["gmail", "yahoo", "outlook", "hotmail", "protonmail", "zoho", "icloud", "aol"];
 
-    return domains[Math.floor(Math.random() * domains.length)];
+    return domains[this.randomNumber(domains.length) - 1];
   }
 
-  private extractUser(data: any) {
-    const { id, firstName, lastName, email, password, birthDate: dateOfBirth, phone } = data;
+  private randomNumber(maxId: number): number {
+    return Math.floor(Math.random() * maxId) + 1;
+  }
+
+  private extractUser(data: IDummyUser): IUserEntity {
+    const { id, firstName, lastName, email, password, birthDate, phone } = data;
 
     const mobile = `+27${phone.replace(/-/g, "").substring(4)}`.substring(0, 12);
 
     const gmail = email.replace("x.dummyjson", this.generateEmailDomain());
 
-    return {
+    const user = {
       id,
       firstName,
       lastName,
       email: gmail,
       password,
-      dateOfBirth,
+      dateOfBirth: new Date(birthDate),
       mobile,
       credit: 0,
     };
+
+    return user;
   }
 
-  private extractAddresses(data: any) {
-    const { address: street, city, state, postalCode: postCode } = data?.address;
+  private extractAddresses(data: IDummyUser): { [key: string]: Omit<IAddressEntity, "id"> } {
+    const { address: street, city, state, postalCode } = data?.address;
 
     const {
       name: buildingCompanyName,
@@ -125,32 +292,32 @@ export class DataSeedService {
         street,
         city,
         state,
-        postCode,
+        postCode: parseInt(postalCode),
       },
       workAddress: {
         buildingCompanyName,
         street: street1,
         city: city1,
         state: state1,
-        postCode: postCode1,
+        postCode: parseInt(postCode1),
       },
     };
   }
 
-  private extractCardData(data: any) {
+  private extractCardData(data: IDummyUser): Omit<IPaymentCardEntity, "id"> {
     const { cardType, cardNumber, cardExpire, iban } = data?.bank;
 
     return {
       userId: data.id,
       cardType,
       lastFourDigits: cardNumber.slice(-4),
-      expiryMonth: cardExpire.slice(0, 2),
-      expiryYear: cardExpire.slice(-2),
+      expiryMonth: parseInt(cardExpire.slice(0, 2)),
+      expiryYear: parseInt(cardExpire.slice(-2)),
       cardToken: iban,
     };
   }
 
-  private extractProductData(data: any) {
+  private extractProductData(data: IDummyProduct): IProductEntity {
     const {
       id,
       title: name,
@@ -173,28 +340,28 @@ export class DataSeedService {
       length,
       width,
       height,
-      brand: brand ?? "This one",
+      brand: brand ?? "RayTech",
       categoryId,
     };
   }
 
-  private extractReviewData(data: any, reviewCount: number) {
+  private extractReviewData(data: IDummyProduct, reviewCount: number): IReviewEntity[] {
     const reviews = [];
 
     const productId = data.id;
 
     for (const [index, review] of data.reviews.entries()) {
-      const userId = Math.floor(Math.random() * 208) + 1;
+      const userId = this.randomNumber(totalUsers);
       const { rating, comment, date } = review;
-      reviews.push({ id: reviewCount + index + 1, userId, productId, rating, comment, reviewDate: date });
+      reviews.push({ id: reviewCount + index + 1, userId, productId, rating, comment, reviewDate: new Date(date) });
     }
 
-    const extraReviewCount = Math.floor(Math.random() * 10) + 1;
+    const extraReviewCount = this.randomNumber(10);
     const startingId = reviewCount + data.reviews.length + 1;
 
     for (let i = 0; i < extraReviewCount; i++) {
-      const userId = Math.floor(Math.random() * 208) + 1;
-      const randomRating = Math.floor(Math.random() * 5) + 1;
+      const userId = this.randomNumber(totalUsers);
+      const randomRating = this.randomNumber(5);
       reviews.push({
         id: startingId + i,
         userId,
@@ -207,10 +374,11 @@ export class DataSeedService {
     return reviews;
   }
 
-  private extractPriceHistoryData(data: any, priceHistoryCount: number) {
-    const { id: productId, price } = data;
+  private extractPriceHistoryData(data: IDummyProduct, priceHistoryCount: number): IProductPriceHistoryEntity[] {
     const priceHistories = [];
-    const priceChanges = Math.floor(Math.random() * 4) + 1;
+
+    const { id: productId, price } = data;
+    const priceChanges = this.randomNumber(4);
     let startDate = new Date(2022, 0, 1);
 
     for (let i = 0; i < priceChanges; i++) {
@@ -229,7 +397,7 @@ export class DataSeedService {
     return priceHistories;
   }
 
-  private extractProductImages(data: any, productImageCount: number) {
+  private extractProductImages(data: IDummyProduct, productImageCount: number): IProductImageEntity[] {
     const { id, images } = data;
 
     return images.map((image: string, index: number) => ({
@@ -239,19 +407,119 @@ export class DataSeedService {
     }));
   }
 
-  private async seedRoleData() {
+  private generateOrderAndReturnItems(
+    products: IDummyProduct[],
+    orderId: number,
+    orderCount: number,
+    returnId: number | undefined
+  ): generatedOrderAndReturnItems {
+    const itemCount = this.randomNumber(5);
+
+    const orderedItems: IOrderItemEntity[] = [];
+    const returnedItems: IReturnItemEntity[] = [];
+
+    const startingId = orderCount + 1;
+
+    let orderTotal = 0;
+    let returnTotal = 0;
+
+    // Generate Order Items
+    for (let i = 0; i < itemCount; i++) {
+      const productId = this.randomNumber(totalProducts);
+      const { price } = products.find((product) => product.id === productId) ?? { price: 0 };
+      const quantity = this.randomNumber(3);
+      orderedItems.push({ id: startingId + i, orderId, productId, price, quantity });
+      orderTotal += price * quantity;
+    }
+
+    // Generate Return Items
+    if (returnId) {
+      const returnCount = this.randomNumber(Math.ceil(itemCount / 2));
+
+      for (let i = 0; i < returnCount; i++) {
+        const index = this.randomNumber(orderedItems.length) - 1;
+        let orderItem = orderedItems[index];
+
+        while (returnedItems.find((returnedItems) => returnedItems.orderItemId === orderItem.id)) {
+          orderItem = orderedItems[this.randomNumber(orderedItems.length) - 1];
+        }
+
+        const { id: orderItemId, quantity } = orderItem;
+        const returnQuantity = this.randomNumber(quantity);
+
+        returnTotal += orderItem.price * returnQuantity;
+
+        returnedItems.push({ returnId, orderItemId, quantity: returnQuantity });
+      }
+    }
+
+    return { orderTotal, orderedItems, returnTotal, returnedItems };
+  }
+
+  private generateReturn(
+    returnCount: number,
+    refundCount: number,
+    order: Omit<IOrderEntity, "totalDue">
+  ): { generatedReturn: Partial<IReturnEntity>; refund: Partial<IRefundEntity> } {
+    const generatedReturn: Partial<IReturnEntity> = {};
+    const refund: Partial<IRefundEntity> = {};
+
+    const { id: orderId, shippedDate, userId } = order;
+
+    if (Math.random() < 0.1) {
+      const returnStatuses = ["Pending", "Approved", "Rejected"];
+      const refundMethods = ["Payment Card", "Customer Credit"];
+      const returnReasons = [
+        "Item not as described",
+        "Wrong item shipped",
+        "Item arrived damaged",
+        "Better price available",
+        "Changed mind",
+        "Found a better product",
+        "Item arrived too late",
+        "Unwanted gift",
+        "Defective item",
+        "Not compatible",
+        "Poor quality",
+        "Ordered wrong item",
+      ];
+
+      generatedReturn.id = returnCount + 1;
+      generatedReturn.orderId = orderId;
+      generatedReturn.returnDate = new Date(new Date(shippedDate).setDate(shippedDate.getDate() + 7));
+      generatedReturn.status = returnStatuses[this.randomNumber(returnStatuses.length) - 1];
+      generatedReturn.reason = returnReasons[this.randomNumber(returnReasons.length) - 1];
+
+      if (generatedReturn.status === "Approved") {
+        generatedReturn.refundMethod = refundMethods[this.randomNumber(refundMethods.length) - 1];
+
+        if ((generatedReturn.refundMethod = "Payment Card")) {
+          refund.id = refundCount + 1;
+          refund.returnId = generatedReturn.id;
+          refund.paymentCardId = userId;
+          refund.date = new Date(
+            new Date(generatedReturn.returnDate).setDate(generatedReturn.returnDate.getDate() + 7)
+          );
+        }
+      }
+    }
+
+    return { generatedReturn, refund };
+  }
+
+  private async seedRoleData(): Promise<void> {
     const roles = ["ADMIN", "PRODUCT MANAGER", "FINANCE MANAGER", "CS AGENT", "CUSTOMER"];
 
     await this.roleRepo?.insertMany(roles.map((name, index) => ({ id: index + 1, roleName: name })));
   }
 
-  private async seedAddressTypeData() {
+  private async seedAddressTypeData(): Promise<void> {
     const roles = ["HOME", "WORK"];
 
     await this.addressTypeRepo?.insertMany(roles.map((name, index) => ({ id: index + 1, addressType: name })));
   }
 
-  private async seedOrderStatusData() {
+  private async seedOrderStatusData(): Promise<void> {
     const orderStatuses = [
       { id: 1, status: "Pending", description: "The order has been created but not yet confirmed or processed" },
       { id: 2, status: "Confirmed", description: "The order has been confirmed and is ready for processing" },
@@ -277,7 +545,7 @@ export class DataSeedService {
     await this.orderStatusRepo?.insertMany(orderStatuses);
   }
 
-  private async seedProductCategoryData() {
+  private async seedProductCategoryData(): Promise<void> {
     const response = await axios.get(this.categoryDataUrl);
 
     const categories = [];
@@ -290,7 +558,7 @@ export class DataSeedService {
     await this.productCategoryRepo?.insertMany(categories);
   }
 
-  private async seedUserData() {
+  private async seedUserData(): Promise<void> {
     const response = await axios.get(this.userDataUrl);
 
     const users = [];
@@ -350,7 +618,7 @@ export class DataSeedService {
     await this.paymentCardRepo?.insertMany(paymentsCards);
   }
 
-  private async seedProductData() {
+  private async seedProductData(): Promise<void> {
     const response = await axios.get(this.productDataUrl);
     const products = [];
     const reviews = [];
@@ -386,7 +654,7 @@ export class DataSeedService {
     await this.inventoryRepo?.insertMany(inventory);
   }
 
-  private async seedCourrierData() {
+  private async seedCourrierData(): Promise<void> {
     const couriers = [
       {
         id: 1,
@@ -423,7 +691,229 @@ export class DataSeedService {
     await this.courrierRepo?.insertMany(couriers);
   }
 
-  public async seedData() {
+  private async seedPromotionsData(): Promise<void> {
+    const promotionsCount = 40;
+    const promotionNames = [
+      "Sale",
+      "Clearance",
+      "Limited Offer",
+      "Flash Sale",
+      "Holiday Special",
+      "Exclusive Deal",
+      "Member Special",
+      "Weekend Sale",
+    ];
+
+    const promotions = [];
+
+    const end = new Date(new Date().setMonth(new Date().getMonth() + 6));
+
+    for (let i = 0; i < promotionsCount; i++) {
+      const startDate = this.generateRandomDate(new Date(2022, 0, 1));
+      const endDate = this.generateRandomDate(startDate, end);
+      const productId = this.randomNumber(totalProducts);
+      const name = promotionNames[this.randomNumber(promotionNames.length) - 1];
+      const discount = parseFloat((0.1 + Math.random() * 0.4).toFixed(2));
+
+      promotions.push({
+        id: i + 1,
+        productId,
+        name,
+        discount,
+        startDate,
+        endDate,
+      });
+    }
+
+    await this.promotionRepo?.insertMany(promotions);
+  }
+
+  private async seedShoppingCartData(): Promise<void> {
+    const shoppingCartCount = 50;
+    const shoppingCarts = [];
+
+    const generateProducts = (userId: number): IShoppingCartEntity[] => {
+      const cartItems = [];
+      const startId = shoppingCarts.length + 1;
+
+      for (let i = 0; i < this.randomNumber(5); i++) {
+        const productId = this.randomNumber(totalProducts);
+        const quantity = this.randomNumber(5);
+
+        cartItems.push({ id: startId + i, userId, productId, quantity });
+      }
+
+      return cartItems;
+    };
+
+    for (let i = 0; i < shoppingCartCount; i++) {
+      const userId = this.randomNumber(totalUsers);
+
+      shoppingCarts.push(...generateProducts(userId));
+    }
+
+    await this.shoppingCartRepo?.insertMany(shoppingCarts);
+  }
+
+  private async seedWishListdData(): Promise<void> {
+    const wishListCount = 50;
+    const wishListNames = [
+      "Summer Vacation",
+      "Birthday Gifts",
+      "Holiday Shopping",
+      "Tech Gadgets",
+      "Home Improvements",
+      "Fitness Goals",
+      "Reading List",
+      "Travel Destinations",
+      "Cooking Supplies",
+      "Fashion Wishlist",
+      "Music & Instruments",
+      "Gaming Gear",
+      "Photography Equipment",
+      "Outdoor Adventures",
+      "Pet Supplies",
+      "Car Accessories",
+      "Office Essentials",
+      "Beauty Products",
+      "DIY Projects",
+      "Garden Tools",
+      "Baby Essentials",
+      "Health & Wellness",
+      "Hobbies & Crafts",
+      "Sports Equipment",
+      "Collectibles",
+    ];
+
+    const wishlists = [];
+    const wishlistItems = [];
+
+    const generateWishlistItems = (wishlistId: number): IWishlistItemEntity[] => {
+      const wishlistItems: IWishlistItemEntity[] = [];
+
+      for (let i = 0; i < this.randomNumber(5); i++) {
+        let productId = this.randomNumber(totalProducts);
+
+        while (wishlistItems.find((x) => x.productId === productId)) {
+          productId = this.randomNumber(totalProducts);
+        }
+
+        wishlistItems.push({ wishlistId, productId });
+      }
+
+      return wishlistItems;
+    };
+
+    for (let i = 0; i < wishListCount; i++) {
+      const id = i + 1;
+      const name = wishListNames[this.randomNumber(wishListNames.length) - 1];
+      const userId = this.randomNumber(totalUsers);
+
+      wishlists.push({ id, name, userId });
+      wishlistItems.push(...generateWishlistItems(id));
+    }
+
+    await this.wishlistRepo?.insertMany(wishlists);
+    await this.wishlistItemRepo?.insertMany(wishlistItems);
+  }
+
+  private async seedOrderData(): Promise<void> {
+    const response = await axios.get(this.productDataUrl);
+    const products: IDummyProduct[] = response?.data?.products;
+
+    const orderCount = 300;
+
+    const orders = [];
+    const orderItems = [];
+
+    const returns = [];
+    const returnItems = [];
+
+    const refunds = [];
+
+    const sales = [];
+
+    const invoices = [];
+
+    for (let i = 0; i < orderCount; i++) {
+      // Generate Order
+      const orderDate = this.generateRandomDate(new Date(2022, 0, 1));
+      const shippedDate = new Date(new Date(orderDate).setDate(orderDate.getDate() + 7));
+
+      const order = {
+        id: i + 1,
+        orderDate,
+        shippedDate,
+        userId: this.randomNumber(totalUsers),
+        addressId: this.randomNumber(totalAddresses),
+        courrierId: this.randomNumber(totalCourriers),
+        orderStatusId: this.randomNumber(totalOrderStatuses),
+        paymentCardId: this.randomNumber(totalUsers),
+      };
+
+      // Generate Returns and Refunds 10% of the time
+      const { generatedReturn, refund } = this.generateReturn(returns.length, refunds.length, order);
+
+      // Generate Order and Return Items
+      const {
+        orderTotal: totalDue,
+        orderedItems,
+        returnTotal,
+        returnedItems,
+      } = this.generateOrderAndReturnItems(products, order.id, orderItems.length, generatedReturn?.id);
+
+      // Add Orders
+      orderItems.push(...orderedItems);
+      orders.push({ ...order, totalDue });
+
+      // Add Returns
+      if (generatedReturn?.id) {
+        returnItems.push(...returnedItems);
+        returns.push({ ...generatedReturn, total: returnTotal } as IReturnEntity);
+      }
+
+      // Add Refunds
+      if (refund?.id) {
+        refunds.push({ ...refund, amount: returnTotal } as IRefundEntity);
+      }
+
+      // Add Sales
+      const saleItems = orderedItems.map((item) => ({
+        id: item.id,
+        userId: order.userId,
+        productId: item.productId,
+        date: order.orderDate,
+        quantity: item.quantity,
+        price: item.price,
+      }));
+
+      sales.push(...saleItems);
+
+      // Add Invoice
+      const invoice = {
+        id: i + 1,
+        invoiceDate: orderDate,
+        totalDue,
+        vatDue: totalDue * 0.15,
+        orderId: order.id,
+      };
+      invoices.push(invoice);
+    }
+
+    await this.orderRepo?.insertMany(orders);
+    await this.orderItemRepo?.insertMany(orderItems);
+
+    await this.returnRepo?.insertMany(returns);
+    await this.returnItemRepo?.insertMany(returnItems);
+
+    await this.refundRepo?.insertMany(refunds);
+
+    await this.saleRepo?.insertMany(sales);
+
+    await this.invoiceRepo?.insertMany(invoices);
+  }
+
+  public async seedData(): Promise<void> {
     await this.connect();
 
     await this.seedRoleData();
@@ -439,9 +929,17 @@ export class DataSeedService {
     await this.seedProductData();
 
     await this.seedCourrierData();
+
+    await this.seedPromotionsData();
+
+    await this.seedShoppingCartData();
+
+    await this.seedWishListdData();
+
+    await this.seedOrderData();
   }
 
-  public async clearData() {
+  public async clearData(): Promise<void> {
     await this.connect();
 
     await this.reviewRepo?.deletAll();
@@ -453,6 +951,10 @@ export class DataSeedService {
     await this.addressTypeRepo?.deletAll();
 
     await this.orderStatusRepo?.deletAll();
+
+    await this.shoppingCartRepo?.deletAll();
+    await this.wishlistItemRepo?.deletAll();
+    await this.wishlistRepo?.deletAll();
 
     await this.paymentCardRepo?.deletAll();
     await this.userRepo?.deletAll();
@@ -467,6 +969,19 @@ export class DataSeedService {
     await this.productCategoryRepo?.deletAll();
 
     await this.courrierRepo?.deletAll();
+    await this.promotionRepo?.deletAll();
+
+    await this.orderRepo?.deletAll();
+    await this.orderItemRepo?.deletAll();
+
+    await this.returnRepo?.deletAll();
+    await this.returnItemRepo?.deletAll();
+
+    await this.refundRepo?.deletAll();
+
+    await this.saleRepo?.deletAll();
+
+    await this.invoiceRepo?.deletAll();
   }
 }
 

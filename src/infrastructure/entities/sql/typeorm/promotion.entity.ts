@@ -8,9 +8,6 @@ export class PromotionEntity extends BaseEntity implements IPromotionEntity {
   @Column()
   name: string;
 
-  @Column({ type: "text" })
-  description: string;
-
   @Column({ type: "decimal", precision: 10, scale: 2 })
   discount: number;
 

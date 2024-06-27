@@ -1,4 +1,4 @@
-import { ISaleEntity } from "@entities/sql/interfaces/sales.entity.interface";
+import { ISaleEntity } from "@root/infrastructure/entities/sql/interfaces/sale.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
 import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
 import { ProductEntity } from "@entities/sql/typeorm/product.entity";

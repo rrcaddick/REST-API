@@ -33,7 +33,7 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
         return_date datetime NOT NULL,
         status enum ('Pending', 'Approved', 'Rejected') NOT NULL DEFAULT 'Pending',
         reason text NOT NULL,
-        refund_method enum ('Payment Card', 'Customer Credit') NOT NULL,
+        refund_method enum ('Payment Card', 'Customer Credit') NULL,
         total decimal(10,2) NOT NULL DEFAULT '0.00',
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
@@ -49,17 +49,17 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
     await queryRunner.query(
       `CREATE TABLE return_items (
         return_id int NOT NULL,
-        product_id int NOT NULL,
+        order_item_id int NOT NULL,
         quantity int NOT NULL,
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-        PRIMARY KEY (return_id, product_id),
+        PRIMARY KEY (return_id, order_item_id),
         CONSTRAINT FK_return_items_returns_return_id 
           FOREIGN KEY (return_id) REFERENCES returns(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION,
-        CONSTRAINT FK_return_items_products_product_id 
-          FOREIGN KEY (product_id) REFERENCES products(id) 
+        CONSTRAINT FK_return_items_order_items_order_item_id 
+          FOREIGN KEY (order_item_id) REFERENCES order_items(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION
       ) ENGINE=InnoDB`

@@ -2,6 +2,6 @@ import { ITimestampEntity } from "@entities/sql/interfaces/base.entity.interface
 
 export interface IReturnItemEntity extends ITimestampEntity {
   returnId: number;
-  productId: number;
+  orderItemId: number;
   quantity: number;
 }

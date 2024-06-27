@@ -1,7 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
+import { Check, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { IReturnItemEntity } from "@entities/sql/interfaces/return-item.entity.interface";
 import { TimestampEntity } from "@entities/sql/typeorm/base.entity";
-import { ProductEntity } from "@entities/sql/typeorm/product.entity";
+import { OrderItemEntity } from "@entities/sql/typeorm/order-item.entity";
 import { ReturnEntity } from "@entities/sql/typeorm/return.entity";
 
 @Entity("return_items")
@@ -9,8 +9,8 @@ export class ReturnItemEntity extends TimestampEntity implements IReturnItemEnti
   @PrimaryColumn({ name: "return_id" })
   returnId: number;
 
-  @PrimaryColumn({ name: "product_id" })
-  productId: number;
+  @PrimaryColumn({ name: "order_item_id" })
+  orderItemId: number;
 
   @Column()
   quantity: number;
@@ -22,10 +22,10 @@ export class ReturnItemEntity extends TimestampEntity implements IReturnItemEnti
   })
   public return: ReturnEntity;
 
-  @ManyToOne(() => ProductEntity, (product) => product.id)
+  @ManyToOne(() => OrderItemEntity, (orderItem) => orderItem.id)
   @JoinColumn({
-    name: "product_id",
+    name: "order_item_id",
     referencedColumnName: "id",
   })
-  public product: ProductEntity;
+  public orderItem: OrderItemEntity;
 }

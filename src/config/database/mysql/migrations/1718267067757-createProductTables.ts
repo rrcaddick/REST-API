@@ -70,7 +70,6 @@ export class CreateProductTables1718267067757 implements MigrationInterface {
         id int NOT NULL AUTO_INCREMENT,
         product_id int NOT NULL,
         name varchar(255) NOT NULL,
-        description text NOT NULL,
         discount decimal(10,2) NOT NULL,
         start_date datetime NOT NULL,
         end_date datetime NOT NULL,
