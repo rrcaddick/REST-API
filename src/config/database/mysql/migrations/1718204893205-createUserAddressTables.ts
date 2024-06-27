@@ -36,11 +36,11 @@ export class CreateUserAddressTables1718204893205 implements MigrationInterface 
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (user_id, address_id, address_type_id),
-        CONSTRAINT FK__user_addresses__addresses__address_id 
-        FOREIGN KEY (address_id) REFERENCES addresses(id) 
+      CONSTRAINT FK__user_addresses__addresses__address_id
+        FOREIGN KEY (address_id) REFERENCES addresses(id)
         ON DELETE NO ACTION 
         ON UPDATE NO ACTION,
-      CONSTRAINT FK__user_addresses__address_types__address_type_id 
+      CONSTRAINT FK__user_addresses__address_types__address_type_id
         FOREIGN KEY (address_type_id) REFERENCES address_types(id) 
         ON DELETE NO ACTION 
         ON UPDATE NO ACTION

@@ -29,7 +29,7 @@ export class CreateProductTables1718267067757 implements MigrationInterface {
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
-        CONSTRAINT fk__product__product_categories__category_id 
+        CONSTRAINT FK__products__product_categories__category_id 
           FOREIGN KEY (category_id) REFERENCES product_categories(id) 
           ON DELETE NO ACTION ON UPDATE NO ACTION
       ) ENGINE=InnoDB
@@ -110,7 +110,7 @@ export class CreateProductTables1718267067757 implements MigrationInterface {
 
     await queryRunner.query(`
       ALTER TABLE products 
-      DROP FOREIGN KEY fk__product__product_categories__category_id
+      DROP FOREIGN KEY FK__products__product_categories__category_id
     `);
 
     await queryRunner.query(`

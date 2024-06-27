@@ -43,7 +43,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "types": ["reflect-metadata", "jest"],
+    "types": ["reflect-metadata", "jest", "node"],
     "inlineSourceMap": true,
     "outDir": "./dist",
     "esModuleInterop": true,

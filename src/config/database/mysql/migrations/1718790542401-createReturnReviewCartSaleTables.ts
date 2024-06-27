@@ -15,11 +15,11 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
-        CONSTRAINT FK_reviews_users_user_id 
+        CONSTRAINT FK__reviews__users__user_id 
           FOREIGN KEY (user_id) REFERENCES users(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION,
-        CONSTRAINT FK_reviews_products_product_id 
+        CONSTRAINT FK__reviews__products__product_id 
           FOREIGN KEY (product_id) REFERENCES products(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION
@@ -37,9 +37,9 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
         total decimal(10,2) NOT NULL DEFAULT '0.00',
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
-        UNIQUE INDEX REL_returns_order_id (order_id),
+        UNIQUE INDEX REL__returns__order_id (order_id),
         PRIMARY KEY (id),
-        CONSTRAINT FK_returns_orders_order_id 
+        CONSTRAINT FK__returns__orders__order_id 
           FOREIGN KEY (order_id) REFERENCES orders(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION
@@ -54,11 +54,11 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (return_id, order_item_id),
-        CONSTRAINT FK_return_items_returns_return_id 
+        CONSTRAINT FK__return_items__returns__return_id 
           FOREIGN KEY (return_id) REFERENCES returns(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION,
-        CONSTRAINT FK_return_items_order_items_order_item_id 
+        CONSTRAINT FK__return_items__order_items__order_item_id 
           FOREIGN KEY (order_item_id) REFERENCES order_items(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION
@@ -75,11 +75,11 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
-        CONSTRAINT FK_refunds_returns_return_id 
+        CONSTRAINT FK__refunds__returns__return_id 
           FOREIGN KEY (return_id) REFERENCES returns(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION,
-        CONSTRAINT FK_refunds_payment_cards_payment_card_id 
+        CONSTRAINT FK__refunds__payment_cards__payment_card_id 
           FOREIGN KEY (payment_card_id) REFERENCES payment_cards(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION
@@ -95,11 +95,11 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
-        CONSTRAINT FK_shopping_carts_users_user_id 
+        CONSTRAINT FK__shopping_carts__users__user_id 
           FOREIGN KEY (user_id) REFERENCES users(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION,
-        CONSTRAINT FK_shopping_carts_products_product_id 
+        CONSTRAINT FK__shopping_carts__products__product_id 
           FOREIGN KEY (product_id) REFERENCES products(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION
@@ -117,11 +117,11 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
         created_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
         updated_at datetime(6) NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
         PRIMARY KEY (id),
-        CONSTRAINT FK_sales_products_product_id 
+        CONSTRAINT FK__sales__products__product_id 
           FOREIGN KEY (product_id) REFERENCES products(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION,
-        CONSTRAINT FK_sales_users_user_id 
+        CONSTRAINT FK__sales__users__user_id 
           FOREIGN KEY (user_id) REFERENCES users(id) 
           ON DELETE NO ACTION 
           ON UPDATE NO ACTION
@@ -132,51 +132,51 @@ export class CreateReturnReviewCartSaleTables1718790542401 implements MigrationI
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(`
       ALTER TABLE sales 
-      DROP FOREIGN KEY FK_sales_users_user_id
+      DROP FOREIGN KEY FK__sales__users__user_id
     `);
     await queryRunner.query(`
       ALTER TABLE sales 
-      DROP FOREIGN KEY FK_sales_products_product_id
+      DROP FOREIGN KEY FK__sales__products__product_id
     `);
     await queryRunner.query(`
       ALTER TABLE shopping_carts 
-      DROP FOREIGN KEY FK_shopping_carts_users_user_id
+      DROP FOREIGN KEY FK__shopping_carts__users__user_id
     `);
     await queryRunner.query(`
       ALTER TABLE shopping_carts 
-      DROP FOREIGN KEY FK_shopping_carts_products_product_id
+      DROP FOREIGN KEY FK__shopping_carts__products__product_id
     `);
     await queryRunner.query(`
       ALTER TABLE refunds 
-      DROP FOREIGN KEY FK_refunds_returns_return_id
+      DROP FOREIGN KEY FK__refunds__returns__return_id
     `);
     await queryRunner.query(`
       ALTER TABLE refunds 
-      DROP FOREIGN KEY FK_refunds_payment_cards_payment_card_id
+      DROP FOREIGN KEY FK__refunds__payment_cards__payment_card_id
     `);
     await queryRunner.query(`
       ALTER TABLE returns 
-      DROP FOREIGN KEY FK_returns_orders_order_id
+      DROP FOREIGN KEY FK__returns__orders__order_id
     `);
     await queryRunner.query(`
       ALTER TABLE return_items 
-      DROP FOREIGN KEY FK_return_items_returns_return_id
+      DROP FOREIGN KEY FK__return_items__returns__return_id
     `);
     await queryRunner.query(`
       ALTER TABLE return_items 
-      DROP FOREIGN KEY FK_return_items_products_product_id
+      DROP FOREIGN KEY FK__return_items__products__product_id
     `);
     await queryRunner.query(`
       ALTER TABLE reviews 
-      DROP FOREIGN KEY FK_reviews_users_user_id
+      DROP FOREIGN KEY FK__reviews__users__user_id
     `);
     await queryRunner.query(`
       ALTER TABLE reviews 
-      DROP FOREIGN KEY FK_reviews_products_product_id
+      DROP FOREIGN KEY FK__reviews__products__product_id
     `);
 
     await queryRunner.query(`
-      DROP INDEX REL_returns_order_id ON returns
+      DROP INDEX REL__returns__order_id ON returns
     `);
 
     await queryRunner.query(`DROP TABLE sales`);
