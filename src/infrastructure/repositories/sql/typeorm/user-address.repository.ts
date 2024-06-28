@@ -8,4 +8,8 @@ export class UserAddressRepository extends BaseRepository<UserAddressEntity, IUs
   constructor(@inject("UserAddressEntity") UseraddressEntity: UserAddressEntity) {
     super(UseraddressEntity);
   }
+
+  getUserAddresses(userId: number): Promise<UserAddressEntity[]> {
+    return this.repo.find({ where: { userId }, relations: ["address", "addressType"] });
+  }
 }

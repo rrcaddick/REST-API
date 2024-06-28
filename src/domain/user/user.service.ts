@@ -1,24 +1,38 @@
-import { autoInjectable } from "tsyringe";
-// import { IUserModel } from "./user.model.interface";
-// import { IUserService } from "./user.service.interface";
-// import { getIdentity } from "@root/utils/database";
-// import { IUserRepository } from "@repositories/mongodb/typegoose/user.repository.interface";
-// import { IUserEntity } from "@entities/sql/interfaces/user.entity.interface";
-// import { UserModel } from "./user.model";
+import { inject, injectable } from "tsyringe";
+import { UserRepository } from "@repositories/sql/typeorm/user.repository";
+import { UserRoleRepository } from "@repositories/sql/typeorm/user-role.repository";
+import { UserAddressRepository } from "@repositories/sql/typeorm/user-address.repository";
+import { IUserModel } from "./user.model.interface";
+import { UserModel } from "./user.model";
 
-@autoInjectable()
+@injectable()
 export class UserService {
-  // constructor(@inject("UserRepository") private _repo?: IUserRepository<IUserEntity>) {}
-  // private get repo() {
-  //   if (!this._repo) throw Error("No user repository defined");
-  //   return this._repo;
+  constructor(
+    @inject("UserRepo") private userRepo: UserRepository,
+    @inject("UserAddressRepo") private userAddressRepo: UserAddressRepository,
+    @inject("UserRoleRepo") private userRoleRepo: UserRoleRepository
+  ) {}
+
+  // async getAllUsers(): Promise<IUserModel[]> {
+  //   return this.userRepo.getAllUsers();
   // }
-  // public async get(id: string): Promise<IUserModel> {
-  //   const user = await this.repo.getById(getIdentity(id));
-  //   return new UserModel(user);
-  // }
-  // public async create(newUser: Omit<IUserEntity, "id">): Promise<IUserModel> {
-  //   const user = await this.repo.create(newUser);
-  //   return new UserModel(user);
-  // }
+
+  async getUser(id: number): Promise<IUserModel> {
+    const userEntity = await this.userRepo.findOneById(id);
+    const userAddresses = await this.userAddressRepo.getUserAddresses(id);
+    const roleEntities = await this.userRoleRepo.getUserRoles(id);
+
+    if (!userEntity || !userAddresses || !roleEntities) {
+      throw new Error(`No user found with id: ${id}`);
+    }
+
+    const addresses = userAddresses.map((userAddress) => ({
+      type: userAddress.addressType.addressType,
+      ...userAddress.address,
+    }));
+
+    const roles = roleEntities.map(({ role }) => role);
+
+    return new UserModel(userEntity, addresses, roles);
+  }
 }

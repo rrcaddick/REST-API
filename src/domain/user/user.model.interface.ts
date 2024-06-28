@@ -1,9 +1,17 @@
+export interface IAddressModel {
+  type: string;
+  buildingCompanyName?: string;
+  street: string;
+  city: string;
+  state: string;
+  postCode: number;
+}
+
 export interface IUserModel {
-  id: string;
+  id: number;
+  fullName: string;
   email: string;
-  name: string;
-  phoneNumbers: string[];
+  dateOfBirth: Date;
+  addresses: IAddressModel[];
   roles: string[];
-  addPhoneNumber(phoneNumber: string): void;
-  removePhoneNumber(phoneNumber: string): void;
 }

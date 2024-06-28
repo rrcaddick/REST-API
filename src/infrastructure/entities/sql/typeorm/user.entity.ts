@@ -10,7 +10,9 @@ import { WishlistEntity } from "@entities/sql/typeorm/wishlist.entity";
 import { OrderEntity } from "@entities/sql/typeorm/order.entity";
 import { ShoppingCartEntity } from "./shopping-cart.entity";
 import { ReviewEntity } from "./review.entity";
+import { injectable } from "tsyringe";
 
+@injectable()
 @Entity("users")
 export class UserEntity extends BaseEntity implements IUserEntity {
   @Column({ name: "first_name" })

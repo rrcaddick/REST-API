@@ -8,4 +8,8 @@ export class UserRoleRepository extends BaseRepository<UserRoleEntity, IUserRole
   constructor(@inject("UserRoleEntity") userRoleEntity: UserRoleEntity) {
     super(userRoleEntity);
   }
+
+  getUserRoles(userId: number): Promise<UserRoleEntity[]> {
+    return this.repo.find({ where: { userId }, relations: ["role"] });
+  }
 }

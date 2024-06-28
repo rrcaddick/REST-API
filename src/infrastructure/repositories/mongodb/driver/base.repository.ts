@@ -4,7 +4,6 @@ import { Identity } from "@root/common/types/indentity.type";
 export type ErrorConfig = { update: string; delete: string };
 
 export abstract class BaseRepository<T> implements IBaseRepository<T> {
-  // TODO: Fix entity type
   protected abstract entity: any;
   private notFoundError: string;
 

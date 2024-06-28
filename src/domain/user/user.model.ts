@@ -1,45 +1,23 @@
+import { IAddressEntity } from "@root/infrastructure/entities/sql/interfaces/address.entity.interface";
+import { IRoleEntity } from "@root/infrastructure/entities/sql/interfaces/role.entity.interface";
 import { IUserEntity } from "@root/infrastructure/entities/sql/interfaces/user.entity.interface";
-import { IUserModel } from "./user.model.interface";
-import { Identity } from "@root/common/types/indentity.type";
-
-// TODO: Add private schema and public validate method
-type UserData = { id: Identity; email: string; name: string; phoneNumbers: string[] };
+import { IAddressModel, IUserModel } from "./user.model.interface";
+import { UserAddressEntity } from "@root/infrastructure/entities/sql/typeorm/user-address.entity";
 
 export class UserModel implements IUserModel {
-  public id: string;
+  constructor(userEntity: IUserEntity, addresses: IAddressModel[], roleEntities: IRoleEntity[]) {
+    this.id = userEntity.id;
+    this.fullName = `${userEntity.firstName} ${userEntity.lastName}`;
+    this.email = userEntity.email;
+    this.dateOfBirth = userEntity.dateOfBirth;
+    this.addresses = addresses;
+    this.roles = roleEntities.map((role) => role.roleName);
+  }
+
+  public id: number;
+  public fullName: string;
   public email: string;
-  public name: string;
-  public phoneNumbers: string[];
+  public dateOfBirth: Date;
+  public addresses: IAddressModel[];
   public roles: string[];
-
-  constructor(userEntity: IUserEntity);
-  constructor(userData: UserData);
-  constructor(id: Identity, email: string, name: string, phoneNumbers: string[]);
-  constructor(arg1: Identity | IUserEntity | UserData, email?: string, name?: string, phoneNumbers?: string[]) {
-    switch (true) {
-      case typeof arg1 === "object" && "email" in arg1: {
-        const { id, email } = arg1;
-
-        this.id = id.toString();
-        this.email = email;
-        break;
-      }
-      default:
-        this.id = arg1.toString();
-        this.email = email ?? "";
-        this.name = name ?? "";
-        this.phoneNumbers = phoneNumbers ?? [];
-    }
-  }
-
-  addPhoneNumber(phoneNumber: string): void {
-    this.phoneNumbers.push(phoneNumber);
-  }
-
-  removePhoneNumber(phoneNumber: string): void {
-    const index = this.phoneNumbers.indexOf(phoneNumber);
-    if (index !== -1) {
-      this.phoneNumbers.splice(index, 1);
-    }
-  }
 }

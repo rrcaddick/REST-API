@@ -3,15 +3,14 @@ import { LoggerService } from "@logger/logger.service";
 import { ILogger } from "@logger/logger.interface";
 import { IDbConnection, MongoDbConnection } from "@config/mongodb.config";
 // import { IUserEntity } from "@entities/sql/interfaces/user.entity.interface";
-import { MongooseUserRepository } from "@repositories/mongodb/typegoose";
-import { UserEntity } from "@entities/sql/typeorm/user.entity";
-import { UserService, IUserModel, UserModel } from "@user";
+// import { MongooseUserRepository } from "@repositories/mongodb/typegoose";
 // import { IUserRepository } from "@repositories/mongodb/typegoose/user.repository.interface";
 import { IDataSource } from "./db.config.interface";
 import { MySqlDataSource } from "./database/mysql/mysql.config";
+import { UserEntity } from "@entities/sql/typeorm/user.entity";
 import { UserRepository } from "@repositories/sql/typeorm/user.repository";
-import { RoleRepository } from "@repositories/sql/typeorm/role.repository";
 import { RoleEntity } from "@entities/sql/typeorm/role.entity";
+import { RoleRepository } from "@repositories/sql/typeorm/role.repository";
 import { AddressTypeEntity } from "@entities/sql/typeorm/address-type.entity";
 import { AddressTypeRepository } from "@repositories/sql/typeorm/address-type.repository";
 import { ProductCategoryEntity } from "@entities/sql/typeorm/product-category.entity";
@@ -60,6 +59,7 @@ import { ReturnItemRepository } from "@repositories/sql/typeorm/return-item.repo
 import { RefundRepository } from "@repositories/sql/typeorm/refund.repository";
 import { SaleRepository } from "@repositories/sql/typeorm/sale.repository";
 import { InvoiceRepository } from "@repositories/sql/typeorm/invoice.repository";
+import { UserService } from "@domain/user/user.service";
 
 // TODO: Create factories to dynamically return implentation based on env variables or config file
 container.register<ILogger>("Logger", { useClass: LoggerService });
@@ -67,11 +67,7 @@ container.register<IDbConnection>("DbConnection", { useClass: MongoDbConnection 
 container.register<IDataSource>("DataSource", { useClass: MySqlDataSource }, { lifecycle: Lifecycle.Singleton });
 
 // User
-container.register<IUserModel>("UserModel", { useClass: UserModel });
-
-container.register<UserService>("UserService", { useClass: UserService });
-
-container.register<MongooseUserRepository>("UserRepository", { useClass: MongooseUserRepository });
+// container.register<MongooseUserRepository>("UserRepository", { useClass: MongooseUserRepository });
 
 //////////////////////////////////////////////////////////////////////////////
 //                               TYPEORM                                    //
@@ -132,3 +128,6 @@ container.register("ReturnItemRepo", { useClass: ReturnItemRepository });
 container.register("RefundRepo", { useClass: RefundRepository });
 container.register("SaleRepo", { useClass: SaleRepository });
 container.register("InvoiceRepo", { useClass: InvoiceRepository });
+
+// Service
+container.register("UserService", { useClass: UserService });

@@ -1,8 +1,8 @@
-import "module-alias/register";
-import "reflect-metadata";
-import { config } from "dotenv";
-config();
-import "@config/di.config";
+// import "module-alias/register";
+// import "reflect-metadata";
+// import { config } from "dotenv";
+// config();
+// // import "@config/di.config";
 import axios from "axios";
 import { autoInjectable, inject } from "tsyringe";
 import { UserRepository } from "@repositories/sql/typeorm/user.repository";
