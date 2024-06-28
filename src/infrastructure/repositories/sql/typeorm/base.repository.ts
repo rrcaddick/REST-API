@@ -25,12 +25,15 @@ export class BaseRepository<T extends Object, K> {
     };
 
     this.repo = client.getRepository(entityTarget);
-    this.query = this.repo.createQueryBuilder();
+
+    // TODO: Resolve entity metadata issue with this
+    // this.query = this.repo.createQueryBuilder();
   }
 
   // TODO: Fix type issue with data. For now it works
   async insertMany(data: Omit<K, "id">[]): Promise<InsertResult> {
-    return await this.query
+    return await this.repo
+      .createQueryBuilder()
       .insert()
       .values(data as any)
       .execute();
@@ -41,15 +44,15 @@ export class BaseRepository<T extends Object, K> {
   }
 
   async deletAll(): Promise<void> {
-    await this.query.delete().execute();
+    await this.repo.createQueryBuilder().delete().execute();
   }
 
   async findOneById(id: number | number[]): Promise<T | null> {
-    return await this.query.where("id = :id", { id }).getOne();
+    return await this.repo.createQueryBuilder().where("id = :id", { id }).getOne();
   }
 
   async findById(id: number | number[]): Promise<T[] | null> {
-    return await this.query.where("id = :id", { id }).getMany();
+    return await this.repo.createQueryBuilder().where("id = :id", { id }).getMany();
   }
 
   async findByKey(primaryKey: keyDef): Promise<T | null>;
@@ -59,11 +62,11 @@ export class BaseRepository<T extends Object, K> {
     if (Array.isArray(arg1)) {
       const whereClause = arg1.map((key) => `${key.keyName} = :${key.keyName}`).join(" AND ");
       const parameters = arg1.reduce((params, key) => ({ ...params, [key.keyName]: key.keyValue }), {});
-      return await this.query.where(whereClause, parameters).getOne();
+      return await this.repo.createQueryBuilder().where(whereClause, parameters).getOne();
     }
 
     // Single primary key
     const { keyName, keyValue } = arg1;
-    return await this.query.where(`${keyName} = :${keyName}`, { keyValue }).getOne();
+    return await this.repo.createQueryBuilder().where(`${keyName} = :${keyName}`, { keyValue }).getOne();
   }
 }
