@@ -1,4 +1,4 @@
-import { Repository, DataSource, InsertResult, SelectQueryBuilder } from "typeorm";
+import { Repository, DataSource, InsertResult, SelectQueryBuilder, FindOptionsWhere, FindManyOptions } from "typeorm";
 import { inject, autoInjectable } from "tsyringe";
 import { IDataSource } from "@root/config/db.config.interface";
 
@@ -45,6 +45,15 @@ export class BaseRepository<T extends Object, K> {
 
   async deletAll(): Promise<void> {
     await this.repo.createQueryBuilder().delete().execute();
+  }
+
+  // Bug with Typeorm typeings for generic base classes. Temp fix casting to unkown first
+  async findOneWithRelations(id: number, ralations: string[]): Promise<T | null> {
+    return await this.repo.findOne({ where: { id } as unknown as FindOptionsWhere<T>, relations: ralations });
+  }
+
+  async findWithRelations(ralations: string[]): Promise<T[]> {
+    return await this.repo.find({ relations: ralations });
   }
 
   async findOneById(id: number | number[]): Promise<T | null> {

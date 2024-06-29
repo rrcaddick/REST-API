@@ -12,10 +12,10 @@ export class UserController extends Controller {
     super();
   }
 
-  // @Get("")
-  // public async getUsers(): Promise<UserEntity> {
-  //   return await this.userService.getAllUsers();
-  // }
+  @Get("")
+  public async getUsers(): Promise<IUserModel[]> {
+    return await this.userService.getUsers();
+  }
 
   @Get("{userId}")
   public async getUser(@Path() userId: number): Promise<IUserModel> {

@@ -1,17 +1,24 @@
-import { IAddressEntity } from "@root/infrastructure/entities/sql/interfaces/address.entity.interface";
-import { IRoleEntity } from "@root/infrastructure/entities/sql/interfaces/role.entity.interface";
-import { IUserEntity } from "@root/infrastructure/entities/sql/interfaces/user.entity.interface";
 import { IAddressModel, IUserModel } from "./user.model.interface";
-import { UserAddressEntity } from "@root/infrastructure/entities/sql/typeorm/user-address.entity";
+import { UserEntity } from "@root/infrastructure/entities/sql/typeorm/user.entity";
 
+// TODO: Likely rename this to UserProfileModel in line with the data access patterns
 export class UserModel implements IUserModel {
-  constructor(userEntity: IUserEntity, addresses: IAddressModel[], roleEntities: IRoleEntity[]) {
+  constructor(userEntity: UserEntity) {
     this.id = userEntity.id;
     this.fullName = `${userEntity.firstName} ${userEntity.lastName}`;
     this.email = userEntity.email;
     this.dateOfBirth = userEntity.dateOfBirth;
-    this.addresses = addresses;
-    this.roles = roleEntities.map((role) => role.roleName);
+
+    this.addresses = userEntity.userAddressses.map(({ address, addressType }) => ({
+      type: addressType.addressType,
+      buildingCompanyName: address.buildingCompanyName,
+      street: address.street,
+      city: address.city,
+      state: address.state,
+      postCode: address.postCode,
+    }));
+
+    this.roles = userEntity.roles.map((role) => role.roleName);
   }
 
   public id: number;
