@@ -6,8 +6,6 @@
   "author": "Ray Caddick",
   "license": "MIT",
   "scripts": {
-    "debug:server": "node -r ts-node/register --inspect=9229 src/server.ts",
-    "debug": "nodemon -e ts -w ./src -x npm run debug:server",
     "build:tsoa": "tsoa spec-and-routes",
     "build:spectacle": "node spectacle.build.js",
     "build:typescript": "tsc --project tsconfig.build.json",

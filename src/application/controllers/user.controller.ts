@@ -1,4 +1,7 @@
-import { Controller, Get, Path, Post, Route } from "tsoa";
+import { IUserModel } from "@root/domain/user/user.model.interface";
+import { UserService } from "@root/domain/user/user.service";
+import { UserEntity } from "@root/infrastructure/entities/sql/typeorm/user.entity";
+import { Controller, Get, Path, Route } from "tsoa";
 import { injectable, inject } from "tsyringe";
 import { IUserModel } from "@domain/user/user.model.interface";
 import { UserService } from "@domain/user/user.service";
