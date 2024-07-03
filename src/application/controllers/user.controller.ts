@@ -1,19 +1,27 @@
-import { IUserModel } from "@root/domain/user/user.model.interface";
-import { UserService } from "@root/domain/user/user.service";
-import { UserEntity } from "@root/infrastructure/entities/sql/typeorm/user.entity";
-import { Controller, Get, Path, Route } from "tsoa";
+import { Controller, Get, Path, Post, Route } from "tsoa";
 import { injectable, inject } from "tsyringe";
+import { IUserModel } from "@domain/user/user.model.interface";
+import { UserService } from "@domain/user/user.service";
+import { LoggerService } from "@logger/logger.service";
 
-// TODO: Inject logger instance and log errors
+// TODO: log errors
 @injectable()
 @Route("users")
 export class UserController extends Controller {
-  constructor(@inject("UserService") private userService: UserService) {
+  constructor(
+    @inject("Logger") private loggerService: LoggerService,
+    @inject("UserService") private userService: UserService
+  ) {
     super();
   }
 
   @Get("")
   public async getUsers(): Promise<IUserModel[]> {
+    return await this.userService.getUsers();
+  }
+
+  @Post("")
+  public async createUsers(): Promise<IUserModel[]> {
     return await this.userService.getUsers();
   }
 
