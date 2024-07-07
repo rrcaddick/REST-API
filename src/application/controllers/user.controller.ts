@@ -1,9 +1,6 @@
-import { IUserModel } from "@root/domain/user/user.model.interface";
-import { UserService } from "@root/domain/user/user.service";
-import { UserEntity } from "@root/infrastructure/entities/sql/typeorm/user.entity";
-import { Controller, Get, Path, Route } from "tsoa";
+import { Body, Controller, Get, Path, Post, Route } from "tsoa";
 import { injectable, inject } from "tsyringe";
-import { IUserModel } from "@domain/user/user.model.interface";
+import { ICreateUser, IUserModel } from "@domain/user/user.model.interface";
 import { UserService } from "@domain/user/user.service";
 import { LoggerService } from "@logger/logger.service";
 
@@ -18,18 +15,18 @@ export class UserController extends Controller {
     super();
   }
 
-  @Get("")
+  @Get()
   public async getUsers(): Promise<IUserModel[]> {
-    return await this.userService.getUsers();
-  }
-
-  @Post("")
-  public async createUsers(): Promise<IUserModel[]> {
     return await this.userService.getUsers();
   }
 
   @Get("{userId}")
   public async getUser(@Path() userId: number): Promise<IUserModel> {
     return await this.userService.getUser(userId);
+  }
+
+  @Post()
+  public async addUser(@Body() userData: ICreateUser): Promise<IUserModel> {
+    return await this.userService.createUser(userData);
   }
 }

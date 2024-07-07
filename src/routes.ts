@@ -16,12 +16,12 @@ const models: TsoaRoute.Models = {
     "IAddressModel": {
         "dataType": "refObject",
         "properties": {
-            "type": {"dataType":"string","required":true},
             "buildingCompanyName": {"dataType":"string"},
             "street": {"dataType":"string","required":true},
             "city": {"dataType":"string","required":true},
             "state": {"dataType":"string","required":true},
             "postCode": {"dataType":"double","required":true},
+            "type": {"dataType":"string","required":true},
         },
         "additionalProperties": true,
     },
@@ -29,12 +29,42 @@ const models: TsoaRoute.Models = {
     "IUserModel": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double","required":true},
             "fullName": {"dataType":"string","required":true},
             "email": {"dataType":"string","required":true},
+            "mobile": {"dataType":"string","required":true},
             "dateOfBirth": {"dataType":"datetime","required":true},
-            "addresses": {"dataType":"array","array":{"dataType":"refObject","ref":"IAddressModel"},"required":true},
+            "credit": {"dataType":"double"},
+            "id": {"dataType":"double","required":true},
+            "addresses": {"dataType":"array","array":{"dataType":"refObject","ref":"IAddressModel"}},
             "roles": {"dataType":"array","array":{"dataType":"string"},"required":true},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ICreateAddress": {
+        "dataType": "refObject",
+        "properties": {
+            "buildingCompanyName": {"dataType":"string"},
+            "street": {"dataType":"string","required":true},
+            "city": {"dataType":"string","required":true},
+            "state": {"dataType":"string","required":true},
+            "postCode": {"dataType":"double","required":true},
+            "addressTypeId": {"dataType":"double","required":true},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "ICreateUser": {
+        "dataType": "refObject",
+        "properties": {
+            "fullName": {"dataType":"string","required":true},
+            "email": {"dataType":"string","required":true},
+            "mobile": {"dataType":"string","required":true},
+            "dateOfBirth": {"dataType":"datetime","required":true},
+            "credit": {"dataType":"double"},
+            "password": {"dataType":"string","required":true},
+            "addresses": {"dataType":"array","array":{"dataType":"refObject","ref":"ICreateAddress"}},
+            "roleIds": {"dataType":"array","array":{"dataType":"double"},"required":true},
         },
         "additionalProperties": true,
     },
@@ -107,6 +137,41 @@ export function RegisterRoutes(app: Router) {
 
               templateService.apiHandler({
                 methodName: 'getUser',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        app.post('/users',
+            ...(fetchMiddlewares<RequestHandler>(UserController)),
+            ...(fetchMiddlewares<RequestHandler>(UserController.prototype.addUser)),
+
+            async function UserController_addUser(request: ExRequest, response: ExResponse, next: any) {
+            const args: Record<string, TsoaRoute.ParameterSchema> = {
+                    userData: {"in":"body","name":"userData","required":true,"ref":"ICreateUser"},
+            };
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<UserController>(UserController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              templateService.apiHandler({
+                methodName: 'addUser',
                 controller,
                 response,
                 next,

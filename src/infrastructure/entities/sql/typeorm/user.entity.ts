@@ -2,17 +2,47 @@ import bcrypt from "bcrypt";
 import { Entity, Column, OneToMany, ManyToMany, JoinTable, BeforeInsert } from "typeorm";
 import { IUserEntity } from "@entities/sql/interfaces/user.entity.interface";
 import { BaseEntity } from "@entities/sql/typeorm/base.entity";
-import { UserRoleEntity } from "@root/infrastructure/entities/sql/typeorm/user-role.entity";
 import { RoleEntity } from "@entities/sql/typeorm/role.entity";
 import { AddressEntity } from "@entities/sql/typeorm/address.entity";
-import { UserAddressEntity } from "@root/infrastructure/entities/sql/typeorm/user-address.entity";
+import { UserAddressEntity } from "@infrastructure/entities/sql/typeorm/user-address.entity";
 import { WishlistEntity } from "@entities/sql/typeorm/wishlist.entity";
 import { OrderEntity } from "@entities/sql/typeorm/order.entity";
 import { ShoppingCartEntity } from "./shopping-cart.entity";
-import { ReviewEntity } from "./review.entity";
+import { ReviewEntity } from "@entities/sql/typeorm/review.entity";
+import { ICreateUser } from "@domain/user/user.model.interface";
+import { AddressTypeEntity } from "@entities/sql/typeorm/address-type.entity";
 
 @Entity("users")
 export class UserEntity extends BaseEntity implements IUserEntity {
+  constructor();
+  constructor(createUser: ICreateUser);
+  constructor(arg1?: ICreateUser | undefined) {
+    super();
+    if (arg1) {
+      const [firstName, lastName] = arg1.fullName?.split(" ") ?? [];
+
+      this.firstName = firstName;
+      this.lastName = lastName;
+      this.email = arg1.email;
+      this.password = arg1.password;
+      this.mobile = arg1.mobile;
+      this.credit = arg1.credit ?? 0;
+      this.dateOfBirth = arg1.dateOfBirth;
+
+      this.roles = arg1.roleIds.map((id) => {
+        const roleEntity = new RoleEntity();
+        roleEntity.id = id;
+        return roleEntity;
+      });
+
+      if (arg1.addresses && arg1.addresses.length > 0) {
+        this.userAddressses = arg1.addresses.map(
+          (address) => new UserAddressEntity(new AddressEntity(address), new AddressTypeEntity(address.addressTypeId))
+        );
+      }
+    }
+  }
+
   @Column({ name: "first_name" })
   public firstName: string;
 
@@ -34,10 +64,7 @@ export class UserEntity extends BaseEntity implements IUserEntity {
   @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
   public credit: number;
 
-  @OneToMany(() => UserRoleEntity, (userRole) => userRole.user)
-  public userRoles: UserRoleEntity[];
-
-  @ManyToMany(() => RoleEntity, (role) => role.users)
+  @ManyToMany(() => RoleEntity, (role) => role.users, { cascade: true })
   @JoinTable({
     name: "user_roles",
     joinColumn: {
@@ -51,7 +78,7 @@ export class UserEntity extends BaseEntity implements IUserEntity {
   })
   public roles: RoleEntity[];
 
-  @OneToMany(() => UserAddressEntity, (userAddress) => userAddress.user)
+  @OneToMany(() => UserAddressEntity, (userAddress) => userAddress.user, { cascade: true })
   public userAddressses: UserAddressEntity[];
 
   @ManyToMany(() => AddressEntity, (address) => address.users)

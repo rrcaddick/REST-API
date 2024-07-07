@@ -1,4 +1,3 @@
-import "module-alias/register";
 import "reflect-metadata";
 import { config } from "dotenv";
 config();
@@ -46,6 +45,8 @@ import { ReturnItemRepository } from "@repositories/sql/typeorm/return-item.repo
 import { RefundRepository } from "@repositories/sql/typeorm/refund.repository";
 import { SaleRepository } from "@repositories/sql/typeorm/sale.repository";
 import { InvoiceRepository } from "@repositories/sql/typeorm/invoice.repository";
+import { Include } from "@common/types/utility.types";
+import { hashObject } from "@utils/crypto";
 
 interface IDummyUser {
   id: number;
@@ -279,27 +280,31 @@ export class DataSeedService {
     return user;
   }
 
-  private extractAddresses(data: IDummyUser): { [key: string]: Omit<IAddressEntity, "id"> } {
+  private extractAddresses(data: IDummyUser): {
+    [key: string]: Include<Omit<IAddressEntity, "id">, { addressHash: string }>;
+  } {
     const { address: street, city, state, postalCode } = data?.address;
 
     const {
       name: buildingCompanyName,
-      address: { address: street1, city: city1, state: state1, postalCode: postCode1 },
+      address: { address: w_street, city: w_city, state: w_state, postalCode: w_postCode },
     } = data?.company;
 
     return {
       homeAddress: {
+        addressHash: hashObject({ street, city, state, postalCode: parseInt(postalCode) }),
         street,
         city,
         state,
         postCode: parseInt(postalCode),
       },
       workAddress: {
+        addressHash: hashObject({ buildingCompanyName, w_street, w_city, w_state, w_postCode: parseInt(w_postCode) }),
         buildingCompanyName,
-        street: street1,
-        city: city1,
-        state: state1,
-        postCode: parseInt(postCode1),
+        street: w_street,
+        city: w_city,
+        state: w_state,
+        postCode: parseInt(w_postCode),
       },
     };
   }

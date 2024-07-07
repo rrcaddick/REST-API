@@ -21,6 +21,8 @@
       "@services/*": ["src/application/services/*"],
       "@config": ["src/config"],
       "@config/*": ["src/config/*"],
+      "@common": ["src/common"],
+      "@common/*": ["src/common/*"],
       "@domain": ["src/domain"],
       "@domain/*": ["src/domain/*"],
       "@user": ["src/domain/user"],
@@ -29,8 +31,8 @@
       "@product/*": ["src/domain/product/*"],
       "@infrastructure": ["src/infrastructure"],
       "@infrastructure/*": ["src/infrastructure/*"],
-      "@logger": ["src/infrastructure/logger"],
-      "@logger/*": ["src/infrastructure/logger/*"],
+      "@logger": ["src/application/services/logger"],
+      "@logger/*": ["src/application/services/logger/*"],
       "@middleware": ["src/infrastructure/middleware"],
       "@middleware/*": ["src/infrastructure/middleware/*"],
       "@entities": ["src/infrastructure/entities"],
@@ -38,7 +40,9 @@
       "@repositories": ["src/infrastructure/repositories"],
       "@repositories/*": ["src/infrastructure/repositories/*"],
       "@utils": ["src/utils"],
-      "@utils/*": ["src/utils/*"]
+      "@utils/*": ["src/utils/*"],
+      "tsoa": ["node_modules/tsoa/dist"],
+      "tsoa/": ["node_modules/tsoa/dist/"]
     }
   }
 }

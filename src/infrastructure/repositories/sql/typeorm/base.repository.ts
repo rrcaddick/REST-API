@@ -1,4 +1,12 @@
-import { Repository, DataSource, InsertResult, SelectQueryBuilder, FindOptionsWhere, FindManyOptions } from "typeorm";
+import {
+  Repository,
+  DataSource,
+  InsertResult,
+  SelectQueryBuilder,
+  FindOptionsWhere,
+  FindManyOptions,
+  QueryRunner,
+} from "typeorm";
 import { inject, autoInjectable } from "tsyringe";
 import { IDataSource } from "@root/config/db.config.interface";
 
@@ -10,24 +18,24 @@ type keyDef = {
 @autoInjectable()
 export class BaseRepository<T extends Object, K> {
   protected repo: Repository<T>;
-  protected query: SelectQueryBuilder<T>;
+  protected client: DataSource;
+  protected queryRunner: QueryRunner;
 
-  constructor(private entity: T, @inject("DataSource") private dataSource?: IDataSource) {
+  constructor(private entity: T, @inject("DataSource") protected dataSource?: IDataSource) {
     if (!this.dataSource) {
       throw new Error("No Data Source injected!");
     }
 
-    const client = this.dataSource.getClient() as DataSource;
+    this.client = this.dataSource.getClient() as DataSource;
+
+    this.queryRunner = this.client.createQueryRunner();
 
     const entityTarget = {
       type: this.entity,
       name: this.entity.constructor.name,
     };
 
-    this.repo = client.getRepository(entityTarget);
-
-    // TODO: Resolve entity metadata issue with this
-    // this.query = this.repo.createQueryBuilder();
+    this.repo = this.client.getRepository(entityTarget);
   }
 
   // TODO: Fix type issue with data. For now it works
@@ -39,8 +47,16 @@ export class BaseRepository<T extends Object, K> {
       .execute();
   }
 
-  async insert(data: Omit<K, "id">): Promise<T> {
-    return await this.repo.save(data as any);
+  async insert(data: Omit<K, "id">): Promise<InsertResult> {
+    return await this.repo
+      .createQueryBuilder()
+      .insert()
+      .values(data as any)
+      .execute();
+  }
+
+  async create(data: Omit<T, "id">): Promise<T> {
+    return await this.repo.save(data as any, {});
   }
 
   async deletAll(): Promise<void> {

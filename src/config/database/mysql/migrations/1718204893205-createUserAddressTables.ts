@@ -17,6 +17,7 @@ export class CreateUserAddressTables1718204893205 implements MigrationInterface 
     await queryRunner.query(`
       CREATE TABLE addresses (
         id int NOT NULL AUTO_INCREMENT,
+        address_hash varchar(64) NOT NULL,
         building_company_name varchar(255) NULL,
         street varchar(255) NOT NULL,
         city varchar(255) NOT NULL,

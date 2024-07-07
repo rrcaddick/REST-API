@@ -1,5 +1,6 @@
-import { IAddressModel, IUserModel } from "./user.model.interface";
-import { UserEntity } from "@root/infrastructure/entities/sql/typeorm/user.entity";
+import { IAddressModel } from "@domain/address/address.model.interface";
+import { IUserModel } from "@domain/user/user.model.interface";
+import { UserEntity } from "@entities/sql/typeorm/user.entity";
 
 // TODO: Likely rename this to UserProfileModel in line with the data access patterns
 export class UserModel implements IUserModel {
@@ -7,7 +8,9 @@ export class UserModel implements IUserModel {
     this.id = userEntity.id;
     this.fullName = `${userEntity.firstName} ${userEntity.lastName}`;
     this.email = userEntity.email;
+    this.mobile = userEntity.mobile;
     this.dateOfBirth = userEntity.dateOfBirth;
+    this.credit = userEntity.credit;
 
     this.addresses = userEntity.userAddressses.map(({ address, addressType }) => ({
       type: addressType.addressType,
@@ -24,7 +27,9 @@ export class UserModel implements IUserModel {
   public id: number;
   public fullName: string;
   public email: string;
+  public mobile: string;
   public dateOfBirth: Date;
-  public addresses: IAddressModel[];
+  public credit?: number;
+  public addresses?: IAddressModel[];
   public roles: string[];
 }

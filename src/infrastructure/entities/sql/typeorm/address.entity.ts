@@ -5,9 +5,26 @@ import { UserAddressEntity } from "@root/infrastructure/entities/sql/typeorm/use
 import { OrderEntity } from "./order.entity";
 import { UserEntity } from "./user.entity";
 import { AddressTypeEntity } from "./address-type.entity";
+import { ICreateAddress } from "@root/domain/address/address.model.interface";
 
 @Entity("addresses")
 export class AddressEntity extends BaseEntity implements IAddressEntity {
+  constructor();
+  constructor(createAddress?: ICreateAddress);
+  constructor(arg1?: ICreateAddress | undefined) {
+    super();
+    // TODO: Validate and standardize address data. Use google address validator API or similar
+    if (arg1) {
+      this.street = arg1.street;
+      this.buildingCompanyName = arg1.buildingCompanyName;
+      this.city = arg1.city;
+      this.state = arg1.state;
+      this.postCode = arg1.postCode;
+    }
+  }
+  @Column({ name: "address_hash" })
+  public addressHash: string;
+
   @Column()
   public street: string;
 
@@ -43,7 +60,7 @@ export class AddressEntity extends BaseEntity implements IAddressEntity {
   })
   public users: UserEntity[];
 
-  @ManyToMany(() => AddressTypeEntity, (addressType) => addressType.addresses)
+  @OneToMany(() => AddressTypeEntity, (addressType) => addressType.addresses)
   @JoinTable({
     name: "user_addresses",
     joinColumn: { name: "address_id", referencedColumnName: "id" },
