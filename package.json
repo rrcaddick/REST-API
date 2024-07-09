@@ -6,7 +6,7 @@
   "author": "Ray Caddick",
   "license": "MIT",
   "scripts": {
-    "debug": "nodemon",
+    "debug": "tsoa spec-and-routes && nodemon",
     "build:tsoa": "tsoa spec-and-routes",
     "build1:spectacle": "node spectacle.build.js",
     "build:typescript": "tsc --project tsconfig.build.json && resolve-tspaths",

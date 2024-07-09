@@ -60,14 +60,17 @@ import { RefundRepository } from "@repositories/sql/typeorm/refund.repository";
 import { SaleRepository } from "@repositories/sql/typeorm/sale.repository";
 import { InvoiceRepository } from "@repositories/sql/typeorm/invoice.repository";
 import { UserService } from "@domain/user/user.service";
+import { IErrorHandler } from "@middleware/error-handler.interafce";
+import { ErrorHandler } from "@middleware/error-handler";
+
+// TODO: Split this into multiple files that contain register functions for each logical type, ie repos, entities ,servces etc
 
 // TODO: Create factories to dynamically return implentation based on env variables or config file
-container.register<ILogger>("Logger", { useClass: LoggerService });
+container.register<ILogger>("Logger", { useClass: LoggerService }, { lifecycle: Lifecycle.Singleton });
 container.register<IDbConnection>("DbConnection", { useClass: MongoDbConnection });
-container.register<IDataSource>("DataSource", { useClass: MySqlDataSource }, { lifecycle: Lifecycle.Singleton });
 
-// User
-// container.register<MongooseUserRepository>("UserRepository", { useClass: MongooseUserRepository });
+container.register<IDataSource>("DataSource", { useClass: MySqlDataSource }, { lifecycle: Lifecycle.Singleton });
+container.register<IErrorHandler>("ErrorHandler", { useClass: ErrorHandler }, { lifecycle: Lifecycle.Singleton });
 
 //////////////////////////////////////////////////////////////////////////////
 //                               TYPEORM                                    //

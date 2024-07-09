@@ -31,47 +31,50 @@ export class UserRepository extends BaseRepository<UserEntity, IUserEntity> {
       const roleEntities = roles.map((role) => ({ roleId: role.id, userId }));
       await query.insert().into(UserRoleEntity).values(roleEntities).updateEntity(false).execute();
 
-      // Check if addresses exist and get id
-      const addresses = userAddressses.map(
-        ({ address: { buildingCompanyName, street, city, state, postCode }, addressType: { id } }) => ({
-          addressHash: hashObject({ buildingCompanyName, street, city, state, postCode }),
-          buildingCompanyName,
-          street,
-          city,
-          state,
-          postCode,
-          addressTypeId: id,
-        })
-      );
+      if (userAddressses && userAddressses.length > 0) {
+        // Check if addresses exist and get id
+        const addresses = userAddressses.map(
+          ({ address: { buildingCompanyName, street, city, state, postCode }, addressType: { id } }) => ({
+            addressHash: hashObject({ buildingCompanyName, street, city, state, postCode }),
+            buildingCompanyName,
+            street,
+            city,
+            state,
+            postCode,
+            addressTypeId: id,
+          })
+        );
 
-      const existingAddresses = await query
-        .select(["a.id", "a.addressHash"])
-        .from(AddressEntity, "a")
-        .where("a.address_hash IN (:...hashes)", { hashes: addresses.map(({ addressHash }) => addressHash) })
-        .getMany();
+        const existingAddresses = await query
+          .select(["a.id", "a.addressHash"])
+          .from(AddressEntity, "a")
+          .where("a.address_hash IN (:...hashes)", { hashes: addresses.map(({ addressHash }) => addressHash) })
+          .getMany();
 
-      const newAddresses = addresses.filter(
-        ({ addressHash }) => !existingAddresses.find((a) => a.addressHash === addressHash)
-      );
+        const newAddresses = addresses.filter(
+          ({ addressHash }) => !existingAddresses.find((a) => a.addressHash === addressHash)
+        );
 
-      // Insert userAddresses {userId, addressId, addressTypeId}
-      const userAddresses =
-        existingAddresses?.map(
-          ({ id: addressId, addressHash }) =>
-            new UserAddressEntity(
-              userId,
-              addressId,
-              addresses.find((a) => a.addressHash === addressHash)?.addressTypeId!
-            )
-        ) ?? [];
+        // Insert userAddresses {userId, addressId, addressTypeId}
 
-      const { identifiers: addressIds } = await query.insert().into(AddressEntity).values(newAddresses).execute();
+        const userAddresses =
+          existingAddresses?.map(
+            ({ id: addressId, addressHash }) =>
+              new UserAddressEntity(
+                userId,
+                addressId,
+                addresses.find((a) => a.addressHash === addressHash)?.addressTypeId!
+              )
+          ) ?? [];
 
-      userAddresses.push(
-        ...addressIds.map(({ id }, index) => new UserAddressEntity(userId, id, newAddresses[index].addressTypeId))
-      );
+        const { identifiers: addressIds } = await query.insert().into(AddressEntity).values(newAddresses).execute();
 
-      await query.insert().into(UserAddressEntity).values(userAddresses).updateEntity(false).execute();
+        userAddresses.push(
+          ...addressIds.map(({ id }, index) => new UserAddressEntity(userId, id, newAddresses[index].addressTypeId))
+        );
+
+        await query.insert().into(UserAddressEntity).values(userAddresses).updateEntity(false).execute();
+      }
 
       // Commit transaction
       await this.queryRunner.commitTransaction();
@@ -79,6 +82,7 @@ export class UserRepository extends BaseRepository<UserEntity, IUserEntity> {
     } catch (error) {
       // TODO: Log errors with logger instance
       await this.queryRunner.rollbackTransaction();
+      throw error;
     } finally {
       await this.queryRunner.release();
     }
